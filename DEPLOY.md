@@ -20,7 +20,11 @@
 |----------|---------|-------------|
 | `PORT` | `3000` | Port the Express server listens on inside the container |
 | `NODE_ENV` | — | Set to `production` for static file serving; `development` disables SPA serving |
+<<<<<<< HEAD
 | `STAMP_ID` | `qqq` | 3-letter stamp ID. Derives storage account name (`stautodev{stampId}`) and Cosmos account (`cosmos-autodev-{stampId}`) |
+=======
+| `STAMP_ID` | `qqq` | 3-letter stamp ID. Derives storage account (`stautodev{stampId}`) and Cosmos account (`cosmos-autodev-{stampId}`) |
+>>>>>>> 94f5777 ([validator] Validate milestone 07b: Sample specs admin page UI)
 
 ## Port Mappings
 
@@ -30,7 +34,11 @@
 ## Startup Sequence
 
 1. `docker compose build` then `docker compose up -d`
+<<<<<<< HEAD
 2. On startup, the server calls `initCosmos()` which attempts to connect to Azure Cosmos DB. If Azure is unavailable, it logs a warning and continues (non-fatal).
+=======
+2. On startup, the server calls `initCosmos()` which attempts to connect to Azure Cosmos DB. Without Azure credentials, it logs a warning and continues (non-fatal).
+>>>>>>> 94f5777 ([validator] Validate milestone 07b: Sample specs admin page UI)
 3. App serves requests within ~2 seconds. Health endpoint returns 503 (degraded) without Azure but SPA and API routes are functional.
 
 ## Health Check
@@ -50,8 +58,8 @@ docker compose up -d
 docker compose exec playwright sh -c 'mkdir -p /repo/e2e'
 docker cp e2e/package.json autodev-opus-playwright-1:/repo/e2e/package.json
 docker cp e2e/playwright.config.ts autodev-opus-playwright-1:/repo/e2e/playwright.config.ts
-docker cp e2e/ui-validation.spec.ts autodev-opus-playwright-1:/repo/e2e/ui-validation.spec.ts
-docker cp e2e/milestone-01b.spec.ts autodev-opus-playwright-1:/repo/e2e/milestone-01b.spec.ts
+# Copy whichever spec files you need:
+docker cp e2e/milestone-07b.spec.ts autodev-opus-playwright-1:/repo/e2e/milestone-07b.spec.ts
 docker compose exec playwright sh -c 'cd /repo/e2e && npm install && npx playwright test --reporter=list'
 ```
 
@@ -82,6 +90,11 @@ npm test
 11. **Cosmos DB init is non-fatal:** `src/server/index.ts` catches Cosmos DB initialization errors and logs a warning instead of exiting. This allows the app to start in environments without Azure connectivity (Docker, CI).
 12. **react-router-dom required:** The client depends on `react-router-dom` (added in milestone 03). Run `npm install` before running client tests locally — the Docker build handles this via `npm ci`.
 13. **SPA routing:** All client routes (/, /projects/new, /projects/:id, /admin/sample-specs) are served by the Express catch-all `/{*splat}` handler which returns index.html. React Router handles client-side navigation.
+<<<<<<< HEAD
 14. **Sample specs CRUD requires Azure Blob Storage:** The `/api/sample-specs` endpoints (GET list, GET by name, POST, DELETE) all require Azure Blob Storage connectivity. Without credentials, they return 500 with `ChainedTokenCredential authentication failed`. The `blobClient.ts` module does not support Azurite or connection string override — it hardcodes the cloud URL pattern `https://stautodev{stampId}.blob.core.windows.net`. To test CRUD locally, the blob client needs to support `AZURE_STORAGE_CONNECTION_STRING` for Azurite. See issue #69.
 15. **STAMP_ID validation:** `config.ts` validates STAMP_ID with `/^[a-z0-9]{1,16}$/`. Invalid values cause a startup crash. Default is `qqq`.
 16. **Sample specs route registration:** `sampleSpecsRouter` is registered in `app.ts` with `app.use("/api", sampleSpecsRouter)` after healthRouter and before the API 404 handler. Routes: GET/POST `/sample-specs`, GET/DELETE `/sample-specs/:name`.
+=======
+14. **Sample specs API without Azure:** `GET /api/sample-specs` returns HTTP 500 when Azure Blob Storage is unavailable. The SampleSpecsPage shows an error state with a "Retry" button in this case. The "No sample specs uploaded yet" empty state only appears when the API returns 200 with an empty array.
+15. **Toast duplicate text:** The SampleSpecsPage shows both an inline error message and a Sonner toast for "Failed to load specs". Playwright tests should use specific locators (e.g., Retry button) to avoid strict mode violations from duplicate text matches.
+>>>>>>> 94f5777 ([validator] Validate milestone 07b: Sample specs admin page UI)
