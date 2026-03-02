@@ -49,14 +49,14 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/routes/health.ts` — Health check route that verifies Cosmos DB and Blob Storage connectivity.
 - `src/server/routes/sampleSpecs.ts` — CRUD routes for sample spec markdown files in Blob Storage.
 - `src/server/services/sampleSpecs.ts` — Business logic for listing, reading, uploading, and deleting sample specs.
-- `src/server/config.ts` — Stamp configuration: reads `STAMP_ID` env var, exports derived Azure resource names.
+- `src/server/config.ts` — Stamp configuration: reads `STAMP_ID` env var, exports derived Azure resource names and Cosmos DB/container names.
 - `src/server/azure/credential.ts` — Shared `DefaultAzureCredential` instance used by all Azure SDK clients.
 - `src/server/azure/blobClient.ts` — Shared `BlobServiceClient` instance for Azure Blob Storage.
 - `src/server/azure/cosmosClient.ts` — Shared `CosmosClient` instance for Azure Cosmos DB.
 - `src/server/azure/initCosmos.ts` — Cosmos DB initialization: creates database and container if they don't exist.
 - `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
 - `src/client/main.tsx` — React app entry point.
-- `src/client/App.tsx` — Root React component with BrowserRouter, route definitions, and Sonner `<Toaster />`.
+- `src/client/App.tsx` — Root React component with BrowserRouter, route definitions, catch-all 404 route, and Sonner `<Toaster />`.
 - `src/client/components/AppSidebar.tsx` — Sidebar navigation with grouped menu items and active highlighting.
 - `src/client/components/AppLayout.tsx` — Root layout wrapping sidebar and routed page content.
 - `src/client/pages/` — Convention directory for page-level route components.
