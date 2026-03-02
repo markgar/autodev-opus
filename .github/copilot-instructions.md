@@ -49,7 +49,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/routes/health.ts` — Health check route that verifies Cosmos DB and Blob Storage connectivity.
 - `src/server/routes/sampleSpecs.ts` — CRUD routes for sample spec markdown files in Blob Storage.
 - `src/server/services/sampleSpecs.ts` — Business logic for listing, reading, uploading, and deleting sample specs.
-- `src/server/config.ts` — Stamp configuration: reads `STAMP_ID` env var, exports derived Azure resource names (`storageAccountName`, `cosmosAccountName`) and Cosmos DB constants (`cosmosDatabaseName`, `cosmosContainerName`) used by services and initialization.
+- `src/server/config.ts` — Stamp configuration: reads `STAMP_ID` env var, exports derived Azure resource names and Cosmos DB constants used by services and initialization.
 - `src/server/azure/credential.ts` — Shared `DefaultAzureCredential` instance used by all Azure SDK clients.
 - `src/server/azure/blobClient.ts` — Shared `BlobServiceClient` instance for Azure Blob Storage.
 - `src/server/azure/cosmosClient.ts` — Shared `CosmosClient` instance for Azure Cosmos DB.

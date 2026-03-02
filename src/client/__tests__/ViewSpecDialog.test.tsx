@@ -29,7 +29,7 @@ describe("ViewSpecDialog", () => {
       expect(screen.getByText("# Hello World")).toBeInTheDocument();
     });
 
-    expect(globalThis.fetch).toHaveBeenCalledWith("/api/sample-specs/test.md");
+    expect(globalThis.fetch).toHaveBeenCalledWith("/api/sample-specs/test.md", expect.objectContaining({ signal: expect.any(AbortSignal) }));
   });
 
   it("shows spec name as dialog title", async () => {
