@@ -1,6 +1,6 @@
-# Milestone 06 — Project detail and log viewer
+# Milestone 06a — Logs API, project detail page, and log viewer
 
-## Milestone: Project detail page with log viewer and logs API
+## Milestone: Logs API backend, project detail page, and log viewer component
 
 > **Validates:** GET /api/projects/:id returns 200 with project JSON for an existing project. GET /api/projects/:id/logs returns 200 with a JSON object containing a `lines` array (may be empty). The page at /projects/:id renders with the project name, a "Back to Dashboard" link, and a terminal-style log viewer area. The page at /projects/:id for a nonexistent project shows an error state (not a crash). The app builds with `npm run build` and starts with `npm start`.
 
@@ -15,9 +15,3 @@
 - [ ] Add auto-scroll behavior to `LogViewer.tsx`: use a `useRef` on the scroll container and a `useEffect` that scrolls to bottom when `lines` changes — detect manual scroll-up by comparing `scrollTop + clientHeight` to `scrollHeight` (with a small threshold like 50px), set an `isAtBottom` state flag, only auto-scroll when `isAtBottom` is true, resume auto-scroll when user scrolls back to the bottom
 - [ ] Add polling with pause/resume to `ProjectDetailPage.tsx`: use `setInterval` to fetch `GET /api/projects/:id/logs` every 5 seconds, store lines in state, pass to `LogViewer` — add a `paused` state boolean toggled by a button, skip fetch when paused, clear interval on unmount, do not show loading indicator on poll refreshes (only on initial load)
 - [ ] Create pause/resume toggle button inside `LogViewer.tsx` (top-right corner, positioned with `absolute` inside a `relative` container): show "Pause" with a `Pause` Lucide icon and a green pulsing dot (`animate-pulse bg-green-500 rounded-full w-2 h-2`) when polling is active, show "Resume" with a `Play` Lucide icon and a grey dot (`bg-zinc-500`) when paused — accept `paused: boolean` and `onTogglePause: () => void` props
-- [ ] Add responsive layout to the project detail page: on desktop, the log viewer fills remaining viewport height using `h-[calc(100vh-12rem)]` (adjust for header); on mobile, log viewer is full-width with `text-xs` font size instead of `text-sm`, header stacks vertically with the back link, name, and date each on their own line — use Tailwind responsive `md:` prefix classes
-- [ ] Fix finding #86 — Add `isValidSpecName` validation function to `src/server/routes/sampleSpecs.ts`: validate name matches `/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,250}\.md$/` and does not contain `..`, apply to GET `:name`, POST (reject invalid name with 400), and DELETE `:name` routes (return 400 `{ message: "Invalid spec name" }` for invalid names)
-- [ ] Fix finding #87 — Create `src/server/azure/initBlob.ts` with an `initBlobContainers()` function that calls `blobServiceClient.getContainerClient("sample-specs").createIfNotExists()`, call it in `src/server/index.ts` alongside `initCosmos()` wrapped in a try/catch that logs a warning on failure
-- [ ] Fix finding #88 — Update `src/server/services/sampleSpecs.ts` to let Azure SDK `RestError` propagate from `getSpecContent` and `deleteSpec` instead of wrapping in plain `Error`, update `src/server/routes/sampleSpecs.ts` GET `:name` and DELETE `:name` catch blocks to check `(error as any).statusCode === 404` instead of string-matching `"BlobNotFound"`
-- [ ] Fix finding #89 — Add `MAX_SPECS = 1000` constant to `src/server/services/sampleSpecs.ts` and break the `listSpecs` iteration loop once `specs.length >= MAX_SPECS`
-- [ ] Fix finding #90 — Update the Cosmos DB init catch block in `src/server/index.ts` to log a more prominent warning: `"⚠️  Cosmos DB initialization failed:"` followed by `"⚠️  Project CRUD endpoints will return 500 errors until Cosmos DB is available."`
