@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Responsive detail page layout and review-finding fixes
+Last updated: API hardening — validation, blob init, and error handling
 
 1. **Validate environment variables after parsing.** Never trust `parseInt(process.env.X)` without checking for `NaN` and range — fail fast with an actionable error message naming the env var.
 2. **Scope SPA catch-all routes to exclude `/api/*`.** A blanket `app.get("/{*splat}")` will serve HTML for unmatched API paths, masking 404 errors and confusing JSON-expecting clients.
@@ -29,3 +29,4 @@ Last updated: Responsive detail page layout and review-finding fixes
 25. **Return generic messages in 500 API responses.** Never expose raw SDK or library error strings to the client — they leak implementation details and may contain sensitive information. Use `"Internal server error"` and log the real error server-side.
 26. **Audit existing DEPLOY.md notes when adding new ones.** When adding a new deployment note, scan existing notes for contradictions with the new functionality — stale notes accumulate across milestones and actively mislead downstream agents.
 27. **Extract repeated Tailwind class strings into named constants.** When the same long className appears in multiple JSX elements or return branches within a component, define it once as a `const` — styling changes that must touch 3+ identical strings inevitably miss one.
+28. **Keep fallback code paths in sync with primary function signatures.** When a function gains a new parameter (e.g. an externally-generated ID), update all fallback/in-memory paths to accept and use it — silently ignoring parameters in the fallback causes data inconsistencies that only surface in partial-failure scenarios.
