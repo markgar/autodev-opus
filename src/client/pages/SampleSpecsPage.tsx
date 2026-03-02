@@ -13,6 +13,7 @@ export default function SampleSpecsPage() {
   const [error, setError] = useState<string | null>(null);
   const [viewSpecName, setViewSpecName] = useState<string | null>(null);
   const [deleteSpecName, setDeleteSpecName] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function refreshSpecs() {
@@ -37,32 +38,37 @@ export default function SampleSpecsPage() {
   }, []);
 
   async function handleUpload(files: FileList) {
-    for (const file of Array.from(files)) {
-      try {
-        const content = await file.text();
-        const res = await fetch("/api/sample-specs", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: file.name, content }),
-        });
+    setUploading(true);
+    try {
+      for (const file of Array.from(files)) {
+        try {
+          const content = await file.text();
+          const res = await fetch("/api/sample-specs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: file.name, content }),
+          });
 
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({ message: "Upload failed" }));
-          throw new Error(body.message);
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({ message: "Upload failed" }));
+            throw new Error(body.message);
+          }
+
+          toast(`Uploaded ${file.name}`);
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Upload failed";
+          toast.error(`${file.name}: ${message}`);
         }
-
-        toast(`Uploaded ${file.name}`);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "Upload failed";
-        toast.error(`${file.name}: ${message}`);
       }
+      await refreshSpecs();
+    } finally {
+      setUploading(false);
     }
-    await refreshSpecs();
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
-      handleUpload(e.target.files);
+      await handleUpload(e.target.files);
     }
     e.target.value = "";
   }
@@ -71,9 +77,9 @@ export default function SampleSpecsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Sample Specs</h1>
-        <Button onClick={() => fileInputRef.current?.click()}>
+        <Button onClick={() => fileInputRef.current?.click()} disabled={uploading}>
           <Upload />
-          Upload
+          {uploading ? "Uploading…" : "Upload"}
         </Button>
         <input
           ref={fileInputRef}
