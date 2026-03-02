@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Project scaffolding — server, client, build, and static serving
+Last updated: UI component libraries, icon/toast setup, and test infrastructure
 
 1. **Validate environment variables after parsing.** Never trust `parseInt(process.env.X)` without checking for `NaN` and range — fail fast with an actionable error message naming the env var.
 2. **Scope SPA catch-all routes to exclude `/api/*`.** A blanket `app.get("/{*splat}")` will serve HTML for unmatched API paths, masking 404 errors and confusing JSON-expecting clients.
@@ -9,3 +9,5 @@ Last updated: Project scaffolding — server, client, build, and static serving
 5. **Mount routers with path prefixes, not hardcoded full paths.** Define routes relative to their mount point (`router.get("/health")` mounted at `/api`) so route files are composable and the prefix isn't duplicated across every route file.
 6. **Declare type dependencies explicitly.** Don't rely on transitive `@types/*` resolution — if your code uses `node:path` or `node:url`, list `@types/node` in devDependencies directly.
 7. **Don't emit build artifacts that nothing consumes.** Flags like `declaration: true` in a private app's tsconfig produce dead `.d.ts` files — only enable them in configs where consumers exist.
+8. **Sync tests with code changes in the same milestone.** When refactoring (extracting modules, renaming paths, parameterizing values), grep for all test references to the changed code and update them in the same commit.
+9. **Avoid asserting on raw source text.** Tests that `readFileSync` a `.ts` file and check `toContain("string")` break on any refactoring — import and test the actual runtime behavior, or use resilient patterns.
