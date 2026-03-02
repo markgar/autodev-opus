@@ -1,28 +1,16 @@
-import express from "express";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import healthRouter from "./routes/health.js";
+import app from "./app.js";
 
-const app = express();
-const PORT = parseInt(process.env["PORT"] ?? "3000", 10);
-const IS_DEV = process.env["NODE_ENV"] === "development";
-
-app.use(express.json());
-app.use(healthRouter);
-
-if (!IS_DEV) {
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  const clientDistPath = path.join(__dirname, "..", "client");
-
-  app.use(express.static(clientDistPath));
-
-  app.get("/{*splat}", (_req, res) => {
-    res.sendFile(path.join(clientDistPath, "index.html"));
-  });
+function parsePort(raw: string | undefined): number {
+  const port = parseInt(raw ?? "3000", 10);
+  if (Number.isNaN(port) || port < 1 || port > 65535) {
+    throw new Error(`Invalid PORT: "${raw}" — must be an integer between 1 and 65535`);
+  }
+  return port;
 }
+
+const PORT = parsePort(process.env["PORT"]);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 
-export default app;
