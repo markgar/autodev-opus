@@ -95,8 +95,9 @@ npm test
 23. **Playwright container restart:** If the playwright container dies (OOM or timeout during first test run), restart with `docker compose up -d playwright`, then re-copy test files before retrying.
 24. **Projects API requires Cosmos DB:** `GET /api/projects` returns 500 without Cosmos DB (not 200 with `[]`). `GET /api/projects/:id` returns 500 (not 404). The route handler catches the service error and returns `{ "message": "Internal server error" }`. Consistent with sample specs behavior.
 25. **Projects routes registered correctly:** `projectsRouter` is registered in `app.ts` with `app.use("/api", projectsRouter)` after sampleSpecsRouter. Routes: `GET /projects` (list), `GET /projects/:id` (get by id). Both use JSON error envelope on failure.
-26. **Project pages are stubs:** `NewProjectPage`, `ProjectDetailPage`, and `DashboardPage` are placeholder components with only headings. No forms, project lists, or interactive elements yet. Full UI is expected in a later milestone.
+26. **NewProjectPage is fully functional:** `NewProjectPage` at `/projects/new` has a complete form with Zod validation (react-hook-form + zodResolver), a spec picker that loads from `GET /api/sample-specs`, and submits via `POST /api/projects`. The "Create Project" button is disabled when no specs are available. On success, navigates to `/projects/:id`. DashboardPage and ProjectDetailPage are functional with data fetching.
 27. **Playwright test file naming:** E2E test files follow `e2e/milestone-{id}.spec.ts` naming pattern. Copy files into playwright container with `docker cp` due to DinD volume mount limitations.
+<<<<<<< HEAD
 =======
 22. **Projects API requires Cosmos DB:** `GET /api/projects` returns 500 without Cosmos DB (not 200 with `[]`). `GET /api/projects/:id` returns 500 (not 404). The route handler catches the service error and returns `{ "message": "Internal server error" }`. Consistent with sample specs behavior.
 23. **Projects routes registered correctly:** `projectsRouter` is registered in `app.ts` with `app.use("/api", projectsRouter)` after sampleSpecsRouter. Routes: `GET /projects` (list), `GET /projects/:id` (get by id), `GET /projects/:id/logs` (get logs). All use JSON error envelope on failure.
@@ -107,3 +108,8 @@ npm test
 28. **LogViewer states:** The LogViewer component has distinct states: loading (spinner), empty ("No logs yet"), error (red text + retry button), and populated (log lines with pause/resume button). The pause/resume button only appears when log lines are present.
 29. **Pause button text collision:** Project names containing "Pause" or "Resume" will cause Playwright strict mode violations with `getByText`. Always use `getByRole('button', { name: 'Pause' })` for the polling toggle.
 >>>>>>> 29bedc9 ([validator] Add Playwright tests and deployment notes for logs API and project detail milestone)
+=======
+28. **POST /api/projects route:** Validates `name` (non-empty string, max 100 chars) and `specName` (non-empty string) before calling Cosmos DB. Returns 400 with `{ "message": "..." }` on validation failure, 201 with full project JSON on success, 500 on Cosmos/Blob failure.
+29. **Form dependencies:** `react-hook-form`, `@hookform/resolvers`, and `zod` are production dependencies. shadcn/ui `Form`, `Select`, and `Label` components are in `src/client/components/ui/`.
+30. **Spec picker behavior:** The spec picker on `/projects/new` fetches from `GET /api/sample-specs`, strips `.md` extension for display, and appends `.md` back before POSTing. Shows "Loading specs..." while fetching, "No specs available — upload specs in Admin first" when empty, and disables both the select and submit button when no specs exist.
+>>>>>>> c84b40f ([validator] Add milestone-05a e2e tests and update DEPLOY.md)
