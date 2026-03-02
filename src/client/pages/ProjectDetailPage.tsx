@@ -62,6 +62,7 @@ export default function ProjectDetailPage() {
         </p>
       </div>
 
+      {/* Offset accounts for: sidebar header (~3rem) + page padding (4rem) + header section (~7rem mobile stacked / ~5rem desktop) */}
       <div className="h-[calc(100vh-14rem)] md:h-[calc(100vh-12rem)]">
         <LogViewer
           lines={lines}
