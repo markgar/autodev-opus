@@ -8,7 +8,7 @@
 
 ## Tasks
 
-- [ ] Install and initialize shadcn/ui: install class-variance-authority clsx tailwind-merge, create src/client/lib/utils.ts with the cn() helper function, create components.json for shadcn/ui CLI configuration pointing to src/client/components/ui and src/client/lib/utils, configure tsconfig path alias "@/" mapping to "src/client/"
+- [x] Install and initialize shadcn/ui: install class-variance-authority clsx tailwind-merge, create src/client/lib/utils.ts with the cn() helper function, create components.json for shadcn/ui CLI configuration pointing to src/client/components/ui and src/client/lib/utils, configure tsconfig path alias "@/" mapping to "src/client/"
 - [ ] Install Lucide React icons and Sonner toast library: add lucide-react and sonner packages, add `<Toaster />` from sonner to App.tsx
 - [ ] Install and configure vitest for backend tests: add vitest as a dev dependency, create src/server/vitest.config.ts (test root: src/server, environment: node), add "test:server" script to package.json running vitest with this config
 - [ ] Add one placeholder backend test: create src/server/__tests__/health.test.ts that imports the test function from vitest, asserts that true equals true (e.g., `expect(1 + 1).toBe(2)`), and has a descriptive test name like "placeholder server test runs successfully"
