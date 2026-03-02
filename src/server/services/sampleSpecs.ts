@@ -1,9 +1,27 @@
+import { RestError } from "@azure/storage-blob";
 import { blobServiceClient } from "../azure/blobClient.js";
 
 const CONTAINER_NAME = "sample-specs";
+const MAX_SPECS = 1000;
 
 function getContainerClient() {
   return blobServiceClient.getContainerClient(CONTAINER_NAME);
+}
+
+export class SpecNotFoundError extends Error {
+  constructor(name: string) {
+    super(`Spec "${name}" not found`);
+    this.name = "SpecNotFoundError";
+  }
+}
+
+/** Validates a spec filename: alphanumeric start, simple chars, ends with .md, max 255 chars. */
+export function isValidSpecName(name: string): boolean {
+  return /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,250}\.md$/.test(name) && !name.includes("..");
+}
+
+function isNotFoundError(error: unknown): boolean {
+  return error instanceof RestError && error.statusCode === 404;
 }
 
 export interface SampleSpecEntry {
@@ -16,17 +34,13 @@ export async function listSpecs(): Promise<SampleSpecEntry[]> {
   const container = getContainerClient();
   const specs: SampleSpecEntry[] = [];
 
-  try {
-    for await (const blob of container.listBlobsFlat()) {
-      specs.push({
-        name: blob.name,
-        size: blob.properties.contentLength ?? 0,
-        lastModified: blob.properties.lastModified?.toISOString() ?? "",
-      });
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to list sample specs: ${message}`);
+  for await (const blob of container.listBlobsFlat()) {
+    specs.push({
+      name: blob.name,
+      size: blob.properties.contentLength ?? 0,
+      lastModified: blob.properties.lastModified?.toISOString() ?? "",
+    });
+    if (specs.length >= MAX_SPECS) break;
   }
 
   return specs;
@@ -36,22 +50,21 @@ export async function getSpecContent(name: string): Promise<string> {
   const container = getContainerClient();
   const blobClient = container.getBlobClient(name);
 
-  try {
-    const response = await blobClient.download(0);
-    const body = response.readableStreamBody;
-    if (!body) {
-      throw new Error("Empty response body");
-    }
+  const response = await blobClient.download(0).catch((error) => {
+    if (isNotFoundError(error)) throw new SpecNotFoundError(name);
+    throw error;
+  });
 
-    const chunks: Buffer[] = [];
-    for await (const chunk of body) {
-      chunks.push(Buffer.from(chunk));
-    }
-    return Buffer.concat(chunks).toString("utf-8");
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to download sample spec "${name}": ${message}`);
+  const body = response.readableStreamBody;
+  if (!body) {
+    throw new Error("Empty response body");
   }
+
+  const chunks: Buffer[] = [];
+  for await (const chunk of body) {
+    chunks.push(Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks).toString("utf-8");
 }
 
 export async function uploadSpec(
@@ -61,24 +74,17 @@ export async function uploadSpec(
   const container = getContainerClient();
   const blockBlobClient = container.getBlockBlobClient(name);
 
-  try {
-    await blockBlobClient.upload(content, Buffer.byteLength(content), {
-      blobHTTPHeaders: { blobContentType: "text/markdown" },
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to upload sample spec "${name}": ${message}`);
-  }
+  await blockBlobClient.upload(content, Buffer.byteLength(content), {
+    blobHTTPHeaders: { blobContentType: "text/markdown" },
+  });
 }
 
 export async function deleteSpec(name: string): Promise<void> {
   const container = getContainerClient();
   const blobClient = container.getBlobClient(name);
 
-  try {
-    await blobClient.delete();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to delete sample spec "${name}": ${message}`);
-  }
+  await blobClient.delete().catch((error) => {
+    if (isNotFoundError(error)) throw new SpecNotFoundError(name);
+    throw error;
+  });
 }

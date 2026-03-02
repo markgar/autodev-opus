@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Readable } from "node:stream";
+import { RestError } from "@azure/storage-blob";
 import request from "supertest";
 
 /* ------------------------------------------------------------------ */
@@ -31,6 +32,10 @@ vi.mock("../azure/blobClient.js", () => ({
   },
 }));
 
+function makeBlobNotFoundError(): RestError {
+  return new RestError("BlobNotFound", { statusCode: 404, code: "BlobNotFound" });
+}
+
 vi.mock("../azure/cosmosClient.js", () => ({
   cosmosClient: {
     getDatabaseAccount: mocks.getDatabaseAccount,
@@ -44,6 +49,39 @@ vi.mock("../azure/cosmosClient.js", () => ({
 }));
 
 import app from "../app.js";
+import { isValidSpecName } from "../services/sampleSpecs.js";
+
+describe("isValidSpecName", () => {
+  it("accepts simple .md filenames", () => {
+    expect(isValidSpecName("design.md")).toBe(true);
+    expect(isValidSpecName("my-spec_v2.md")).toBe(true);
+    expect(isValidSpecName("A1.md")).toBe(true);
+  });
+
+  it("rejects path traversal patterns", () => {
+    expect(isValidSpecName("../../evil.md")).toBe(false);
+    expect(isValidSpecName("foo/../bar.md")).toBe(false);
+  });
+
+  it("rejects names without .md extension", () => {
+    expect(isValidSpecName("readme.txt")).toBe(false);
+    expect(isValidSpecName("noext")).toBe(false);
+  });
+
+  it("rejects names starting with non-alphanumeric", () => {
+    expect(isValidSpecName(".hidden.md")).toBe(false);
+    expect(isValidSpecName("-dash.md")).toBe(false);
+  });
+
+  it("rejects names over 255 chars", () => {
+    const longName = "a".repeat(253) + ".md";
+    expect(isValidSpecName(longName)).toBe(false);
+  });
+
+  it("rejects empty string", () => {
+    expect(isValidSpecName("")).toBe(false);
+  });
+});
 
 describe("sample specs CRUD API", () => {
   beforeEach(() => {
@@ -119,12 +157,19 @@ describe("sample specs CRUD API", () => {
   });
 
   it("GET /api/sample-specs/:name returns 404 when spec not found", async () => {
-    mocks.download.mockRejectedValue(new Error("BlobNotFound"));
+    mocks.download.mockRejectedValue(makeBlobNotFoundError());
 
     const res = await request(app).get("/api/sample-specs/missing.md");
 
     expect(res.status).toBe(404);
     expect(res.body.message).toContain("not found");
+  });
+
+  it("GET /api/sample-specs/:name returns 400 for invalid name", async () => {
+    const res = await request(app).get("/api/sample-specs/.hidden.md");
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/invalid/i);
   });
 
   /* ---------- POST /api/sample-specs (create) ---------- */
@@ -157,6 +202,15 @@ describe("sample specs CRUD API", () => {
 
     expect(res.status).toBe(400);
     expect(res.body.message).toMatch(/\.md/);
+  });
+
+  it("POST /api/sample-specs returns 400 for path traversal name", async () => {
+    const res = await request(app)
+      .post("/api/sample-specs")
+      .send({ name: "../../evil.md", content: "# Evil" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/invalid/i);
   });
 
   it("POST /api/sample-specs returns 400 when content is empty", async () => {
@@ -200,12 +254,19 @@ describe("sample specs CRUD API", () => {
   });
 
   it("DELETE /api/sample-specs/:name returns 404 when spec not found", async () => {
-    mocks.deleteFn.mockRejectedValue(new Error("BlobNotFound"));
+    mocks.deleteFn.mockRejectedValue(makeBlobNotFoundError());
 
     const res = await request(app).delete("/api/sample-specs/ghost.md");
 
     expect(res.status).toBe(404);
     expect(res.body.message).toContain("not found");
+  });
+
+  it("DELETE /api/sample-specs/:name returns 400 for invalid name", async () => {
+    const res = await request(app).delete("/api/sample-specs/.hidden.md");
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/invalid/i);
   });
 
   /* ---------- Route integration ---------- */

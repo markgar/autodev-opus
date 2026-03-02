@@ -45,15 +45,16 @@ Server and client are siblings — server code never imports from `client/` and 
 - `vite.config.ts` — Vite configuration for the React client build, with Tailwind, `@/` alias, and API proxy.
 - `components.json` — shadcn/ui CLI configuration for component generation.
 - `src/server/app.ts` — Express app configuration (middleware, routes, API 404 handler, static serving). No side effects.
-- `src/server/index.ts` — Server startup entry point (port parsing, Cosmos DB initialization, listen call).
+- `src/server/index.ts` — Server startup entry point (port parsing, Cosmos DB and Blob Storage initialization, listen call).
 - `src/server/routes/health.ts` — Health check route that verifies Cosmos DB and Blob Storage connectivity.
 - `src/server/routes/sampleSpecs.ts` — CRUD routes for sample spec markdown files in Blob Storage.
-- `src/server/services/sampleSpecs.ts` — Business logic for listing, reading, uploading, and deleting sample specs.
+- `src/server/services/sampleSpecs.ts` — Business logic for listing, reading, uploading, and deleting sample specs. Exports `isValidSpecName` validation and `SpecNotFoundError` for structured 404 handling.
 - `src/server/config.ts` — Stamp configuration: reads `STAMP_ID` env var, exports derived Azure resource names and Cosmos DB constants used by services and initialization.
 - `src/server/azure/credential.ts` — Shared `DefaultAzureCredential` instance used by all Azure SDK clients.
 - `src/server/azure/blobClient.ts` — Shared `BlobServiceClient` instance for Azure Blob Storage.
 - `src/server/azure/cosmosClient.ts` — Shared `CosmosClient` instance for Azure Cosmos DB.
 - `src/server/azure/initCosmos.ts` — Cosmos DB initialization: creates database and container if they don't exist.
+- `src/server/azure/initBlob.ts` — Blob Storage initialization: creates the sample-specs container if it doesn't exist.
 - `src/server/models/project.ts` — Project entity interface for Cosmos DB documents.
 - `src/server/services/projectsService.ts` — Projects service with list and get-by-id Cosmos queries, always filters organizationId="default".
 - `src/server/routes/projects.ts` — Projects API routes for list and get-by-id.

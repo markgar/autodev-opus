@@ -1,5 +1,6 @@
 import app from "./app.js";
 import { initCosmos } from "./azure/initCosmos.js";
+import { initBlobContainers } from "./azure/initBlob.js";
 
 function parsePort(raw: string | undefined): number {
   const port = parseInt(raw ?? "3000", 10);
@@ -14,7 +15,15 @@ const PORT = parsePort(process.env["PORT"]);
 try {
   await initCosmos();
 } catch (error) {
-  console.warn("Cosmos DB initialization skipped (unavailable):", (error as Error).message);
+  console.warn("⚠️  Cosmos DB initialization failed:", (error as Error).message);
+  console.warn("⚠️  Project CRUD endpoints will return 500 errors until Cosmos DB is available.");
+}
+
+try {
+  await initBlobContainers();
+} catch (error) {
+  console.warn("⚠️  Blob container initialization failed:", (error as Error).message);
+  console.warn("⚠️  Sample specs endpoints will return 500 errors until Blob Storage is available.");
 }
 
 app.listen(PORT, () => {
