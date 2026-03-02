@@ -45,7 +45,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `vite.config.ts` — Vite configuration for the React client build, with Tailwind, `@/` alias, and API proxy.
 - `components.json` — shadcn/ui CLI configuration for component generation.
 - `src/server/app.ts` — Express app configuration (middleware, routes, API 404 handler, static serving). No side effects.
-- `src/server/index.ts` — Server startup entry point (port parsing, listen call).
+- `src/server/index.ts` — Server startup entry point (port parsing, Cosmos DB initialization, listen call).
 - `src/server/routes/health.ts` — Health check route that verifies Cosmos DB and Blob Storage connectivity.
 - `src/server/routes/sampleSpecs.ts` — CRUD routes for sample spec markdown files in Blob Storage.
 - `src/server/services/sampleSpecs.ts` — Business logic for listing, reading, uploading, and deleting sample specs.

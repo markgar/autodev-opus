@@ -27,7 +27,8 @@ export default function DeleteSpecDialog({
 }: DeleteSpecDialogProps) {
   const [deleting, setDeleting] = useState(false);
 
-  async function handleDelete() {
+  async function handleDelete(event: React.MouseEvent) {
+    event.preventDefault();
     if (!specName) return;
 
     setDeleting(true);

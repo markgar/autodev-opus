@@ -27,20 +27,26 @@ export default function ViewSpecDialog({
   useEffect(() => {
     if (!open || !specName) return;
 
+    const controller = new AbortController();
     setLoading(true);
     setError(null);
     setContent("");
 
-    fetch(`/api/sample-specs/${encodeURIComponent(specName)}`)
+    fetch(`/api/sample-specs/${encodeURIComponent(specName)}`, {
+      signal: controller.signal,
+    })
       .then(async (res) => {
         if (!res.ok) throw new Error("Failed to load spec");
         return res.text();
       })
       .then((text) => setContent(text))
-      .catch((err) =>
-        setError(err instanceof Error ? err.message : "Failed to load spec")
-      )
+      .catch((err) => {
+        if (err.name === "AbortError") return;
+        setError(err instanceof Error ? err.message : "Failed to load spec");
+      })
       .finally(() => setLoading(false));
+
+    return () => controller.abort();
   }, [open, specName]);
 
   function handleDownload() {
