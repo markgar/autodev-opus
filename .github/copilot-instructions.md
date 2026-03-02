@@ -57,7 +57,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/azure/initBlob.ts` — Blob Storage initialization: creates the sample-specs container if it doesn't exist.
 - `src/server/models/project.ts` — Project entity interface for Cosmos DB documents.
 - `src/server/services/projectsService.ts` — Projects service with list and get-by-id Cosmos queries, always filters organizationId="default".
-- `src/server/routes/projects.ts` — Projects API routes for list and get-by-id.
+- `src/server/routes/projects.ts` — Projects API routes for list, get-by-id, and get-logs.
 - `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
 - `src/client/main.tsx` — React app entry point.
 - `src/client/App.tsx` — Root React component with BrowserRouter, route definitions, catch-all 404 route, and Sonner `<Toaster />`.
@@ -72,6 +72,9 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/client/lib/utils.ts` — CSS class name merge utility for component styling.
 - `src/client/vitest.config.ts` — Vitest configuration for frontend tests (jsdom environment).
 - `src/client/test-setup.ts` — Frontend test setup adding DOM assertion matchers.
+- `src/server/services/logsService.ts` — Log retrieval service that reads *.log and events.jsonl blobs from a project's blob container.
+- `src/client/components/LogViewer.tsx` — Terminal-style log viewer with auto-scroll, pause/resume, loading, error, and empty states.
+- `src/client/pages/ProjectDetailPage.tsx` — Project detail page with header, log polling, and LogViewer integration.
 
 ## Architecture
 
