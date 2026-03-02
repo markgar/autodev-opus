@@ -8,7 +8,7 @@
 
 ## Tasks
 
-- [ ] Fix findings #22 and #23: update .github/copilot-instructions.md — fix Key files descriptions for `src/client/lib/utils.ts` to "CSS class name merge utility for component styling" and `src/client/test-setup.ts` to "Frontend test setup adding DOM assertion matchers" (describe roles, not implementation details)
+- [x] Fix findings #22 and #23: update .github/copilot-instructions.md — fix Key files descriptions for `src/client/lib/utils.ts` to "CSS class name merge utility for component styling" and `src/client/test-setup.ts` to "Frontend test setup adding DOM assertion matchers" (describe roles, not implementation details)
 - [ ] Install react-router-dom: `npm install react-router-dom`
 - [ ] Add shadcn/ui sidebar component via CLI (`npx shadcn@latest add sidebar`) — this generates sidebar primitives in src/client/components/ui/sidebar.tsx (SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger, etc.)
 - [ ] Create placeholder page components in src/client/pages/: DashboardPage.tsx (renders heading "Projects" inside a div), NewProjectPage.tsx (renders heading "New Project"), ProjectDetailPage.tsx (renders heading "Project Detail" and reads `:id` from useParams), SampleSpecsPage.tsx (renders heading "Sample Specs") — each is a simple exported functional component with just a page heading
