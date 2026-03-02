@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { RestError } from "@azure/storage-blob";
+import { randomUUID } from "node:crypto";
 import {
   listProjects,
   getProjectById,
@@ -13,26 +13,25 @@ const projectsRouter = Router();
 projectsRouter.post("/projects", async (req, res) => {
   const { name, specName } = req.body ?? {};
 
-  if (typeof name !== "string" || name.trim().length === 0) {
+  const trimmedName = typeof name === "string" ? name.trim() : "";
+  if (trimmedName.length === 0) {
     res.status(400).json({ message: "Project name is required" });
     return;
   }
-  if (name.length > 100) {
+  if (trimmedName.length > 100) {
     res.status(400).json({ message: "Name must be 100 characters or less" });
     return;
   }
-  if (typeof specName !== "string" || specName.trim().length === 0) {
+  const trimmedSpec = typeof specName === "string" ? specName.trim() : "";
+  if (trimmedSpec.length === 0) {
     res.status(400).json({ message: "specName is required" });
     return;
   }
 
   try {
-    const project = await createProject(name.trim(), specName);
-    try {
-      await ensureProjectContainer(project.id);
-    } catch (error) {
-      console.warn("Failed to create blob container for project:", (error as Error).message);
-    }
+    const projectId = randomUUID();
+    await ensureProjectContainer(projectId);
+    const project = await createProject(projectId, trimmedName, trimmedSpec);
     res.status(201).json(project);
   } catch (error) {
     console.error("POST /projects failed:", error);
@@ -79,13 +78,8 @@ projectsRouter.get("/projects/:id/logs", async (req, res) => {
     const lines = await getProjectLogs(id);
     res.json({ lines });
   } catch (error) {
-    if (error instanceof RestError && error.statusCode === 404) {
-      res.json({ lines: [] });
-      return;
-    }
-    const message = error instanceof Error ? error.message : String(error);
     console.error(`GET /projects/${id}/logs failed:`, error);
-    res.status(500).json({ message });
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

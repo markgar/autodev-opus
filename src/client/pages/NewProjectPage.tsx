@@ -41,6 +41,7 @@ export default function NewProjectPage() {
   const navigate = useNavigate();
   const [specs, setSpecs] = useState<SpecOption[]>([]);
   const [loadingSpecs, setLoadingSpecs] = useState(true);
+  const [specsError, setSpecsError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
@@ -48,23 +49,27 @@ export default function NewProjectPage() {
     defaultValues: { name: "", specName: "" },
   });
 
-  useEffect(() => {
-    async function loadSpecs() {
-      try {
-        const res = await fetch("/api/sample-specs");
-        if (!res.ok) throw new Error("Failed to load specs");
-        const data: SpecOption[] = await res.json();
-        setSpecs(data);
-      } catch {
-        setSpecs([]);
-      } finally {
-        setLoadingSpecs(false);
-      }
+  async function loadSpecs() {
+    setLoadingSpecs(true);
+    setSpecsError(false);
+    try {
+      const res = await fetch("/api/sample-specs");
+      if (!res.ok) throw new Error("Failed to load specs");
+      const data: SpecOption[] = await res.json();
+      setSpecs(data);
+    } catch {
+      setSpecsError(true);
+      setSpecs([]);
+    } finally {
+      setLoadingSpecs(false);
     }
+  }
+
+  useEffect(() => {
     loadSpecs();
   }, []);
 
-  const specsEmpty = !loadingSpecs && specs.length === 0;
+  const specsEmpty = !loadingSpecs && !specsError && specs.length === 0;
 
   async function onSubmit(values: FormValues) {
     setSubmitting(true);
@@ -121,42 +126,57 @@ export default function NewProjectPage() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Sample Spec</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  disabled={loadingSpecs || specsEmpty}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue
-                        placeholder={
-                          loadingSpecs
-                            ? "Loading specs..."
-                            : specsEmpty
-                              ? "No specs available — upload specs in Admin first"
-                              : "Select a sample spec"
-                        }
-                      />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {specs.map((spec) => {
-                      const displayName = spec.name.replace(/\.md$/, "");
-                      return (
-                        <SelectItem key={spec.name} value={displayName}>
-                          {displayName}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
+                {specsError ? (
+                  <p className="text-sm text-destructive">
+                    Failed to load specs.{" "}
+                    <button
+                      type="button"
+                      onClick={loadSpecs}
+                      className="underline hover:no-underline"
+                    >
+                      Retry
+                    </button>
+                  </p>
+                ) : (
+                  <>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={loadingSpecs || specsEmpty}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={
+                              loadingSpecs
+                                ? "Loading specs..."
+                                : specsEmpty
+                                  ? "No specs available — upload specs in Admin first"
+                                  : "Select a sample spec"
+                            }
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {specs.map((spec) => {
+                          const displayName = spec.name.replace(/\.md$/, "");
+                          return (
+                            <SelectItem key={spec.name} value={displayName}>
+                              {displayName}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </>
+                )}
               </FormItem>
             )}
           />
 
           <div className="flex gap-3">
-            <Button type="submit" disabled={submitting || specsEmpty}>
+            <Button type="submit" disabled={submitting || specsEmpty || specsError}>
               {submitting && <Loader2 className="animate-spin" />}
               Create Project
             </Button>

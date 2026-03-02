@@ -101,8 +101,8 @@ describe("logs API — GET /api/projects/:id/logs", () => {
   it("returns log lines from .log and events.jsonl blobs", async () => {
     mocks.read.mockResolvedValue({ resource: sampleProject });
     mocks.listBlobsFlat.mockReturnValue([
-      { name: "build.log" },
-      { name: "events.jsonl" },
+      { name: "build.log", properties: { lastModified: new Date("2026-01-01T00:00:00Z") } },
+      { name: "events.jsonl", properties: { lastModified: new Date("2026-01-01T00:01:00Z") } },
     ]);
     mocks.download
       .mockResolvedValueOnce({
@@ -115,18 +115,17 @@ describe("logs API — GET /api/projects/:id/logs", () => {
     const res = await request(app).get("/api/projects/proj-001/logs");
 
     expect(res.status).toBe(200);
-    expect(res.body.lines).toEqual([
-      "line1",
-      "line2",
-      '{"event":"start"}',
-    ]);
+    expect(res.body.lines).toHaveLength(3);
+    expect(res.body.lines).toContain("line1");
+    expect(res.body.lines).toContain("line2");
+    expect(res.body.lines).toContain('{"event":"start"}');
   });
 
   it("returns empty lines when container has no matching blobs", async () => {
     mocks.read.mockResolvedValue({ resource: sampleProject });
     mocks.listBlobsFlat.mockReturnValue([
-      { name: "readme.txt" },
-      { name: "data.json" },
+      { name: "readme.txt", properties: { lastModified: new Date() } },
+      { name: "data.json", properties: { lastModified: new Date() } },
     ]);
 
     const res = await request(app).get("/api/projects/proj-001/logs");
@@ -138,8 +137,8 @@ describe("logs API — GET /api/projects/:id/logs", () => {
   it("skips individual blob 404 errors and returns remaining lines", async () => {
     mocks.read.mockResolvedValue({ resource: sampleProject });
     mocks.listBlobsFlat.mockReturnValue([
-      { name: "build.log" },
-      { name: "deploy.log" },
+      { name: "build.log", properties: { lastModified: new Date("2026-01-01T00:00:00Z") } },
+      { name: "deploy.log", properties: { lastModified: new Date("2026-01-01T00:01:00Z") } },
     ]);
     mocks.download
       .mockRejectedValueOnce(

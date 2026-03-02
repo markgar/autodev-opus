@@ -92,10 +92,13 @@ export async function getSpecContent(name: string): Promise<string> {
   const container = getContainerClient();
   const blobClient = container.getBlobClient(name);
 
-  const response = await blobClient.download(0).catch((error) => {
+  let response;
+  try {
+    response = await blobClient.download(0);
+  } catch (error) {
     if (isNotFoundError(error)) throw new SpecNotFoundError(name);
     throw error;
-  });
+  }
 
   const body = response.readableStreamBody;
   if (!body) {
@@ -135,8 +138,10 @@ export async function deleteSpec(name: string): Promise<void> {
   const container = getContainerClient();
   const blobClient = container.getBlobClient(name);
 
-  await blobClient.delete().catch((error) => {
+  try {
+    await blobClient.delete();
+  } catch (error) {
     if (isNotFoundError(error)) throw new SpecNotFoundError(name);
     throw error;
-  });
+  }
 }

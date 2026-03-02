@@ -15,8 +15,8 @@ sampleSpecsRouter.get("/sample-specs", async (_req, res) => {
     const specs = await listSpecs();
     res.json(specs);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    res.status(500).json({ message });
+    console.error("GET /sample-specs failed:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -37,8 +37,8 @@ sampleSpecsRouter.get("/sample-specs/:name", async (req, res) => {
       res.status(404).json({ message: error.message });
       return;
     }
-    const message = error instanceof Error ? error.message : String(error);
-    res.status(500).json({ message });
+    console.error(`GET /sample-specs/${name} failed:`, error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -59,8 +59,8 @@ sampleSpecsRouter.post("/sample-specs", async (req, res) => {
     await uploadSpec(name, content);
     res.status(201).json({ name });
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    res.status(500).json({ message });
+    console.error("POST /sample-specs failed:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -80,8 +80,8 @@ sampleSpecsRouter.delete("/sample-specs/:name", async (req, res) => {
       res.status(404).json({ message: error.message });
       return;
     }
-    const message = error instanceof Error ? error.message : String(error);
-    res.status(500).json({ message });
+    console.error(`DELETE /sample-specs/${name} failed:`, error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

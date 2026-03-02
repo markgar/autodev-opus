@@ -78,7 +78,6 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/services/logsService.ts` — Log retrieval service that reads *.log and events.jsonl blobs from a project's blob container.
 - `src/client/components/LogViewer.tsx` — Terminal-style log viewer with auto-scroll, pause/resume, loading, error, and empty states.
 - `src/client/pages/ProjectDetailPage.tsx` — Project detail page with header, log polling, and LogViewer integration.
-- `src/client/pages/NewProjectPage.tsx` — New project form with name input, spec picker dropdown, validation, and API integration.
 
 ## Architecture
 

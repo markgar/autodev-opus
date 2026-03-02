@@ -93,11 +93,11 @@ test.describe('Milestone 04a-ii — Projects service and API routes', () => {
     expect(errors).toEqual([]);
   });
 
-  test('Project Detail page shows heading and ID', async ({ page }) => {
+  test('Project Detail page shows error or project info for nonexistent ID', async ({ page }) => {
     await page.goto('/projects/test-123');
-    const heading = page.getByRole('heading', { name: 'Project Detail' });
-    await expect(heading).toBeVisible();
-    await expect(page.getByText('test-123')).toBeVisible();
+    // Without Cosmos DB the fetch fails — expect error or "not found" message
+    const errorText = page.getByText(/project not found|failed to load/i);
+    await expect(errorText).toBeVisible({ timeout: 10000 });
   });
 
   test('sidebar navigation works between Dashboard and Sample Specs', async ({ page }) => {

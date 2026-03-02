@@ -58,7 +58,7 @@ export async function listProjects(): Promise<Project[]> {
     return resources;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to list projects: ${message}`);
+    throw new Error(`Failed to list projects: ${message}`, { cause: error });
   }
 }
 
@@ -74,18 +74,19 @@ export async function getProjectById(id: string): Promise<Project | null> {
       return null;
     }
     const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to get project "${id}": ${message}`);
+    throw new Error(`Failed to get project "${id}": ${message}`, { cause: error });
   }
 }
 
 export async function createProject(
+  id: string,
   name: string,
   specName: string,
 ): Promise<Project> {
   if (!cosmosAvailable) return memoryCreateProject(name, specName);
 
   const project: Project = {
-    id: randomUUID(),
+    id,
     organizationId: "default",
     type: "project",
     name,
@@ -100,6 +101,6 @@ export async function createProject(
     return project;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to create project: ${message}`);
+    throw new Error(`Failed to create project: ${message}`, { cause: error });
   }
 }

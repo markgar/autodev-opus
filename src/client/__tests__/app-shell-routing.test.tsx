@@ -49,12 +49,11 @@ describe("App routing", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders ProjectDetailPage at /projects/:id with param displayed", () => {
+  it("renders ProjectDetailPage at /projects/:id showing loading state", () => {
     renderWithRouter("/projects/abc-123");
-    expect(
-      screen.getByRole("heading", { name: "Project Detail" })
-    ).toBeInTheDocument();
-    expect(screen.getByText("abc-123")).toBeInTheDocument();
+    // ProjectDetailPage shows a loading skeleton while fetching project data
+    const skeletons = document.querySelectorAll(".animate-pulse");
+    expect(skeletons.length).toBeGreaterThan(0);
   });
 
   it("renders SampleSpecsPage at /admin/sample-specs", () => {

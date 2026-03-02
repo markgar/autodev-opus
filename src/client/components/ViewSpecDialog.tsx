@@ -38,12 +38,13 @@ export default function ViewSpecDialog({
         );
         if (!res.ok) throw new Error("Failed to load spec");
         const text = await res.text();
-        setContent(text);
+        if (!signal?.aborted) setContent(text);
       } catch (err) {
         if ((err as Error).name === "AbortError") return;
-        setError(err instanceof Error ? err.message : "Failed to load spec");
+        if (!signal?.aborted)
+          setError(err instanceof Error ? err.message : "Failed to load spec");
       } finally {
-        setLoading(false);
+        if (!signal?.aborted) setLoading(false);
       }
     },
     [specName],
