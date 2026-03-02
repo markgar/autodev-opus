@@ -6,7 +6,11 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe("static file serving configuration", () => {
+<<<<<<< HEAD
   it("app.ts serves static files in non-dev mode", () => {
+=======
+  it("server app.ts serves static files in non-dev mode", () => {
+>>>>>>> edb4e0b ([validator] Fix broken tests and add milestone-01b validation)
     const source = fs.readFileSync(
       path.join(__dirname, "..", "app.ts"),
       "utf-8"
@@ -15,7 +19,11 @@ describe("static file serving configuration", () => {
     expect(source).toContain("IS_DEV");
   });
 
+<<<<<<< HEAD
   it("app.ts has SPA catch-all route for client-side routing", () => {
+=======
+  it("server app.ts has SPA catch-all route for client-side routing", () => {
+>>>>>>> edb4e0b ([validator] Fix broken tests and add milestone-01b validation)
     const source = fs.readFileSync(
       path.join(__dirname, "..", "app.ts"),
       "utf-8"

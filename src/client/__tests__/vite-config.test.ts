@@ -37,6 +37,11 @@ describe("Vite configuration", () => {
       "utf-8"
     );
     expect(config).toContain("/api");
+<<<<<<< HEAD
     expect(config).toContain("localhost:");
+=======
+    expect(config).toContain("localhost");
+    expect(config).toContain("3000");
+>>>>>>> edb4e0b ([validator] Fix broken tests and add milestone-01b validation)
   });
 });
