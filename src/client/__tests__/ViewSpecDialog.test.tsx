@@ -29,7 +29,14 @@ describe("ViewSpecDialog", () => {
       expect(screen.getByText("# Hello World")).toBeInTheDocument();
     });
 
+<<<<<<< HEAD
     expect(globalThis.fetch).toHaveBeenCalledWith("/api/sample-specs/test.md", expect.objectContaining({ signal: expect.any(AbortSignal) }));
+=======
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/sample-specs/test.md",
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
+    );
+>>>>>>> 95f9b2d ([validator] Fix ViewSpecDialog test for AbortController signal, add milestone-04a-i e2e tests, update DEPLOY.md)
   });
 
   it("shows spec name as dialog title", async () => {
