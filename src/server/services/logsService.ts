@@ -4,6 +4,12 @@ import { blobServiceClient } from "../azure/blobClient.js";
 const MAX_LINES = 5000;
 const MAX_BLOBS = 100;
 
+let blobAvailable = true;
+
+export function setLogsBlobAvailable(available: boolean): void {
+  blobAvailable = available;
+}
+
 async function downloadBlobText(
   containerClient: ReturnType<typeof blobServiceClient.getContainerClient>,
   blobName: string,
@@ -23,6 +29,8 @@ async function downloadBlobText(
 }
 
 export async function getProjectLogs(projectId: string): Promise<string[]> {
+  if (!blobAvailable) return [];
+
   const containerClient = blobServiceClient.getContainerClient(projectId);
 
   const blobEntries: { name: string; lastModified: Date }[] = [];

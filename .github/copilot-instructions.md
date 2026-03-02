@@ -76,9 +76,10 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/client/vitest.config.ts` — Vitest configuration for frontend tests (jsdom environment).
 - `src/client/test-setup.ts` — Frontend test setup adding DOM assertion matchers.
 - `src/client/hooks/useSampleSpecs.ts` — Custom hook encapsulating sample specs state, fetching, and upload logic.
-- `src/server/services/logsService.ts` — Log retrieval service that reads *.log and events.jsonl blobs from a project's blob container.
+- `src/server/services/logsService.ts` — Log retrieval service that reads *.log and events.jsonl blobs from a project's blob container. Returns empty array when blob storage is unavailable.
 - `src/client/components/LogViewer.tsx` — Terminal-style log viewer with auto-scroll, pause/resume, loading, error, and empty states.
-- `src/client/pages/ProjectDetailPage.tsx` — Project detail page with header, log polling, and LogViewer integration.
+- `src/client/pages/ProjectDetailPage.tsx` — Project detail page rendering header, log viewer, and back navigation. Delegates data fetching to useProjectDetail hook.
+- `src/client/hooks/useProjectDetail.ts` — Custom hook encapsulating project fetch, log polling, pause/resume state, and abort cleanup for ProjectDetailPage.
 
 ## Architecture
 
