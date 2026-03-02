@@ -7,6 +7,7 @@
     "build:client": "vite build",
     "build": "npm run build:server && npm run build:client",
     "dev": "NODE_ENV=development tsx watch src/server/index.ts & vite dev --port 5173 & wait",
+    "test:server": "vitest run --config src/server/vitest.config.ts",
     "start": "node dist/server/index.js"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "tailwindcss": "^4.2.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   }
 }
