@@ -32,7 +32,15 @@ vi.mock("../azure/blobClient.js", () => ({
 }));
 
 vi.mock("../azure/cosmosClient.js", () => ({
-  cosmosClient: { getDatabaseAccount: mocks.getDatabaseAccount },
+  cosmosClient: {
+    getDatabaseAccount: mocks.getDatabaseAccount,
+    database: () => ({
+      container: () => ({
+        items: { query: () => ({ fetchAll: vi.fn().mockResolvedValue({ resources: [] }) }) },
+        item: () => ({ read: vi.fn().mockResolvedValue({ resource: null }) }),
+      }),
+    }),
+  },
 }));
 
 import app from "../app.js";
