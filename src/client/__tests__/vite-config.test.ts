@@ -4,39 +4,27 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const configSource = fs.readFileSync(
+  path.join(__dirname, "..", "..", "..", "vite.config.ts"),
+  "utf-8"
+);
 
 describe("Vite configuration", () => {
   it("sets client as root directory", () => {
-    const config = fs.readFileSync(
-      path.join(__dirname, "..", "..", "..", "vite.config.ts"),
-      "utf-8"
-    );
-    expect(config).toContain('"src/client"');
+    expect(configSource).toContain('"src/client"');
   });
 
   it("includes React and Tailwind plugins", () => {
-    const config = fs.readFileSync(
-      path.join(__dirname, "..", "..", "..", "vite.config.ts"),
-      "utf-8"
-    );
-    expect(config).toContain("react()");
-    expect(config).toContain("tailwindcss()");
+    expect(configSource).toContain("react()");
+    expect(configSource).toContain("tailwindcss()");
   });
 
   it("outputs to dist/client directory", () => {
-    const config = fs.readFileSync(
-      path.join(__dirname, "..", "..", "..", "vite.config.ts"),
-      "utf-8"
-    );
-    expect(config).toContain("dist/client");
+    expect(configSource).toContain("dist/client");
   });
 
   it("configures API proxy for dev server", () => {
-    const config = fs.readFileSync(
-      path.join(__dirname, "..", "..", "..", "vite.config.ts"),
-      "utf-8"
-    );
-    expect(config).toContain("/api");
-    expect(config).toContain("localhost:");
+    expect(configSource).toContain("/api");
+    expect(configSource).toContain("localhost");
   });
 });
