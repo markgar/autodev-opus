@@ -37,4 +37,19 @@ describe("stamp configuration (config.ts)", () => {
     expect(config.storageAccountName).toBe("stautodevabc123");
     expect(config.cosmosAccountName).toBe("cosmos-autodev-abc123");
   });
+
+  it("throws on invalid STAMP_ID with uppercase letters", async () => {
+    process.env["STAMP_ID"] = "ABC";
+    await expect(import("../config.js")).rejects.toThrow("Invalid STAMP_ID");
+  });
+
+  it("throws on invalid STAMP_ID with special characters", async () => {
+    process.env["STAMP_ID"] = "a/b c";
+    await expect(import("../config.js")).rejects.toThrow("Invalid STAMP_ID");
+  });
+
+  it("throws on STAMP_ID exceeding 16 characters", async () => {
+    process.env["STAMP_ID"] = "a".repeat(17);
+    await expect(import("../config.js")).rejects.toThrow("Invalid STAMP_ID");
+  });
 });
