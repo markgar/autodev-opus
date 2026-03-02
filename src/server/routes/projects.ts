@@ -1,9 +1,40 @@
 import { Router } from "express";
 import { RestError } from "@azure/storage-blob";
-import { listProjects, getProjectById } from "../services/projectsService.js";
+import {
+  listProjects,
+  getProjectById,
+  createProject,
+} from "../services/projectsService.js";
 import { getProjectLogs } from "../services/logsService.js";
+import { ensureProjectContainer } from "../services/projectContainers.js";
 
 const projectsRouter = Router();
+
+projectsRouter.post("/projects", async (req, res) => {
+  const { name, specName } = req.body ?? {};
+
+  if (typeof name !== "string" || name.trim().length === 0) {
+    res.status(400).json({ message: "Project name is required" });
+    return;
+  }
+  if (name.length > 100) {
+    res.status(400).json({ message: "Name must be 100 characters or less" });
+    return;
+  }
+  if (typeof specName !== "string" || specName.trim().length === 0) {
+    res.status(400).json({ message: "specName is required" });
+    return;
+  }
+
+  try {
+    const project = await createProject(name.trim(), specName);
+    await ensureProjectContainer(project.id);
+    res.status(201).json(project);
+  } catch (error) {
+    console.error("POST /projects failed:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 projectsRouter.get("/projects", async (_req, res) => {
   try {

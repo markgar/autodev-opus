@@ -56,14 +56,16 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/azure/initCosmos.ts` — Cosmos DB initialization: creates database and container if they don't exist.
 - `src/server/azure/initBlob.ts` — Blob Storage initialization: creates the sample-specs container if it doesn't exist.
 - `src/server/models/project.ts` — Project entity interface for Cosmos DB documents.
-- `src/server/services/projectsService.ts` — Projects service with list and get-by-id Cosmos queries, always filters organizationId="default".
-- `src/server/routes/projects.ts` — Projects API routes for list, get-by-id, and get-logs.
+- `src/server/services/projectsService.ts` — Projects service with list, get-by-id, and create Cosmos queries, always filters organizationId="default".
+- `src/server/services/projectContainers.ts` — Blob container provisioning for new projects.
+- `src/server/routes/projects.ts` — Projects API routes for list, get-by-id, create, and get-logs.
 - `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
 - `src/client/main.tsx` — React app entry point.
 - `src/client/App.tsx` — Root React component with BrowserRouter, route definitions, catch-all 404 route, and Sonner `<Toaster />`.
 - `src/client/components/AppSidebar.tsx` — Sidebar navigation with grouped menu items and active highlighting.
 - `src/client/components/AppLayout.tsx` — Root layout wrapping sidebar and routed page content.
 - `src/client/pages/` — Convention directory for page-level route components.
+- `src/client/pages/NewProjectPage.tsx` — New project creation form with Zod validation, spec select, and API submission.
 - `src/client/pages/NotFoundPage.tsx` — Catch-all 404 page rendered for unmatched client routes.
 - `src/client/pages/SampleSpecsPage.tsx` — Sample specs admin page with upload, list, view, and delete.
 - `src/client/components/SampleSpecsTable.tsx` — Responsive table/card list for sample specs.
