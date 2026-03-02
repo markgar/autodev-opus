@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { cosmosClient } from "../azure/cosmosClient.js";
 import { cosmosDatabaseName, cosmosContainerName } from "../config.js";
 import type { Project } from "../models/project.js";
@@ -5,6 +6,30 @@ import type { Project } from "../models/project.js";
 const container = cosmosClient
   .database(cosmosDatabaseName)
   .container(cosmosContainerName);
+
+export async function createProject(
+  name: string,
+  specName: string,
+): Promise<Project> {
+  const project: Project = {
+    id: crypto.randomUUID(),
+    organizationId: "default",
+    type: "project",
+    name,
+    specName,
+    createdAt: new Date().toISOString(),
+    latestRunStatus: null,
+    runCount: 0,
+  };
+
+  try {
+    await container.items.create(project);
+    return project;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to create project: ${message}`);
+  }
+}
 
 export async function listProjects(): Promise<Project[]> {
   try {

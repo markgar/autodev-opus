@@ -23,7 +23,7 @@
 
 ### Backend
 
-- [ ] Add `createProject` function to `src/server/services/projectsService.ts` — accepts `name: string` and `specName: string`, generates a UUID `id` (use `crypto.randomUUID()`), creates a Cosmos DB document with fields `{ id, organizationId: "default", type: "project", name, specName, createdAt: new Date().toISOString(), latestRunStatus: null, runCount: 0 }`, returns the created `Project`
+- [x] Add `createProject` function to `src/server/services/projectsService.ts` — accepts `name: string` and `specName: string`, generates a UUID `id` (use `crypto.randomUUID()`), creates a Cosmos DB document with fields `{ id, organizationId: "default", type: "project", name, specName, createdAt: new Date().toISOString(), latestRunStatus: null, runCount: 0 }`, returns the created `Project`
 - [ ] Create `src/server/services/projectContainers.ts` — export `ensureProjectContainer(projectId: string): Promise<void>` that calls `blobServiceClient.getContainerClient(projectId).createIfNotExists()`, wraps errors with a descriptive message
 - [ ] Add `POST /api/projects` route handler in `src/server/routes/projects.ts` — reads `name` and `specName` from `req.body`, validates name is a non-empty string with max 100 characters, validates specName is a non-empty string, returns 400 with `{ message }` on validation failure, calls `createProject(name, specName)` then `ensureProjectContainer(project.id)`, returns 201 with the created project JSON
 
