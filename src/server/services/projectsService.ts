@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { cosmosClient } from "../azure/cosmosClient.js";
 import { cosmosDatabaseName, cosmosContainerName } from "../config.js";
 import type { Project } from "../models/project.js";
@@ -27,9 +26,9 @@ function memoryGetProjectById(id: string): Project | null {
   return memoryProjects.find((p) => p.id === id) ?? null;
 }
 
-function memoryCreateProject(name: string, specName: string): Project {
+function memoryCreateProject(id: string, name: string, specName: string): Project {
   const project: Project = {
-    id: randomUUID(),
+    id,
     organizationId: "default",
     type: "project",
     name,
@@ -83,7 +82,7 @@ export async function createProject(
   name: string,
   specName: string,
 ): Promise<Project> {
-  if (!cosmosAvailable) return memoryCreateProject(name, specName);
+  if (!cosmosAvailable) return memoryCreateProject(id, name, specName);
 
   const project: Project = {
     id,
