@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Bug fixes, Azure SDK installation, and stamp configuration
+Last updated: Shared Azure client modules and Cosmos DB initialization
 
 1. **Validate environment variables after parsing.** Never trust `parseInt(process.env.X)` without checking for `NaN` and range — fail fast with an actionable error message naming the env var.
 2. **Scope SPA catch-all routes to exclude `/api/*`.** A blanket `app.get("/{*splat}")` will serve HTML for unmatched API paths, masking 404 errors and confusing JSON-expecting clients.
@@ -13,3 +13,5 @@ Last updated: Bug fixes, Azure SDK installation, and stamp configuration
 9. **Avoid asserting on raw source text.** Tests that `readFileSync` a `.ts` file and check `toContain("string")` break on any refactoring — import and test the actual runtime behavior, or use resilient patterns.
 10. **Don't duplicate test suites across files.** Before adding a new test file, check if existing tests already assert the same thing — duplicate tests multiply maintenance cost without adding coverage.
 11. **Use `||` not `??` for string env var defaults.** Nullish coalescing (`??`) doesn't catch empty strings — `VAR=""` bypasses the default, producing invalid derived values. Use `||` when empty string should also trigger the fallback.
+12. **Update copilot-instructions.md Key files when changing file responsibilities.** When a milestone adds new behavior to an existing file (e.g. adding DB init to a startup entry point), update its Key files description in the same milestone — stale descriptions mislead future agents.
+13. **Extract shared constants for cross-module magic strings.** When two or more modules reference the same literal (database name, container name, endpoint), define it once in a shared constants or config module to prevent divergence.
