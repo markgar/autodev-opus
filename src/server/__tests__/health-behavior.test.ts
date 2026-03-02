@@ -1,48 +1,28 @@
 import { describe, it, expect } from "vitest";
+import request from "supertest";
+import express from "express";
 import healthRouter from "../routes/health.js";
+
+const testApp = express();
+testApp.use("/api", healthRouter);
 
 describe("health route behavior", () => {
   it("responds with structured health check response", async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const stack = (healthRouter as any).stack as Array<{
-      route?: {
-        path: string;
-        methods: Record<string, boolean>;
-        stack: Array<{ handle: Function }>;
-      };
-    }>;
+    const res = await request(testApp).get("/api/health");
 
-    const healthLayer = stack.find(
-      (layer) => layer.route?.path === "/health"
-    );
-    expect(healthLayer).toBeDefined();
+    expect([200, 503]).toContain(res.status);
+    expect(res.body).toHaveProperty("status");
+    expect(res.body).toHaveProperty("checks");
+    expect(res.body.checks).toHaveProperty("cosmosDb");
+    expect(res.body.checks).toHaveProperty("blobStorage");
+    expect(["ok", "degraded"]).toContain(res.body.status);
+  });
 
-    const handler = healthLayer!.route!.stack[0].handle;
+  it("only responds to GET requests", async () => {
+    const getRes = await request(testApp).get("/api/health");
+    expect(getRes.status).not.toBe(404);
 
-    let statusCode = 0;
-    let jsonBody: unknown = null;
-
-    const mockRes = {
-      json(body: unknown) {
-        jsonBody = body;
-        return this;
-      },
-      status(code: number) {
-        statusCode = code;
-        return this;
-      },
-    };
-
-    // Handler is async — must await it
-    await handler({}, mockRes);
-
-    // Without Azure credentials, checks will be unavailable
-    expect(jsonBody).toHaveProperty("status");
-    expect(jsonBody).toHaveProperty("checks");
-    const body = jsonBody as { status: string; checks: Record<string, string> };
-    expect(body.checks).toHaveProperty("cosmosDb");
-    expect(body.checks).toHaveProperty("blobStorage");
-    expect(["ok", "degraded"]).toContain(body.status);
-    expect(statusCode === 200 || statusCode === 503).toBe(true);
+    const postRes = await request(testApp).post("/api/health");
+    expect(postRes.status).toBe(404);
   });
 });
