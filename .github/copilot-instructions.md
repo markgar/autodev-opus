@@ -60,6 +60,10 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/client/components/AppSidebar.tsx` — Sidebar navigation with grouped menu items and active highlighting.
 - `src/client/components/AppLayout.tsx` — Root layout wrapping sidebar and routed page content.
 - `src/client/pages/` — Convention directory for page-level route components.
+- `src/client/pages/SampleSpecsPage.tsx` — Sample specs admin page with upload, list, view, and delete.
+- `src/client/components/SampleSpecsTable.tsx` — Responsive table/card list for sample specs.
+- `src/client/components/DeleteSpecDialog.tsx` — Confirmation dialog for spec deletion.
+- `src/client/components/ViewSpecDialog.tsx` — Modal for viewing spec content with download.
 - `src/client/lib/utils.ts` — CSS class name merge utility for component styling.
 - `src/client/vitest.config.ts` — Vitest configuration for frontend tests (jsdom environment).
 - `src/client/test-setup.ts` — Frontend test setup adding DOM assertion matchers.
@@ -83,6 +87,7 @@ The Express server exposes API routes under `/api/*` and serves the React SPA as
 ## Conventions
 
 - **Thin controllers, fat services.** Route handlers validate input and return responses; all business logic lives in service modules.
+- **Services directory.** Business logic modules live in `src/server/services/`, one file per domain.
 - **Consistent JSON error envelope.** All API error responses use a structured JSON format with a message field so the frontend can display errors uniformly.
 - **Async/await everywhere.** Use async/await for all asynchronous operations — no raw Promise chains or callbacks.
 - **Early returns for validation.** Check preconditions at the top of a function and return early on failure rather than wrapping the happy path in nested conditionals.
