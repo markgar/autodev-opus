@@ -1,8 +1,8 @@
 const stampId = process.env["STAMP_ID"] || "qqq";
 
-if (!/^[a-z0-9]+$/.test(stampId)) {
+if (!/^[a-z0-9]{1,16}$/.test(stampId)) {
   throw new Error(
-    `Invalid STAMP_ID "${stampId}": must be lowercase alphanumeric only`
+    `Invalid STAMP_ID "${stampId}": must be 1-16 lowercase alphanumeric characters`
   );
 }
 
