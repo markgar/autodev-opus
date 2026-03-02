@@ -29,7 +29,7 @@
 
 ### Frontend — dependencies and components
 
-- [ ] Install form dependencies: `npm install react-hook-form @hookform/resolvers zod`
+- [x] Install form dependencies: `npm install react-hook-form @hookform/resolvers zod`
 - [ ] Add shadcn/ui Select component (`npx shadcn@latest add select`), Label component (`npx shadcn@latest add label`), and Form component (`npx shadcn@latest add form`) to `src/client/components/ui/`
 
 ### Frontend — New Project page
