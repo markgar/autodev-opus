@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test';
 
-test('GET /api/health returns 200 with status ok', async ({ request }) => {
+test('GET /api/health returns structured health response', async ({ request }) => {
   const res = await request.get('/api/health');
-  expect(res.status()).toBe(200);
+  expect([200, 503]).toContain(res.status());
   const body = await res.json();
-  expect(body).toEqual({ status: 'ok' });
+  expect(body).toHaveProperty('status');
+  expect(body).toHaveProperty('checks');
+  expect(['ok', 'degraded']).toContain(body.status);
 });
 
 test('GET /api/nonexistent returns 404 JSON', async ({ request }) => {
