@@ -4,6 +4,12 @@ import { blobServiceClient } from "../azure/blobClient.js";
 const CONTAINER_NAME = "sample-specs";
 const MAX_SPECS = 1000;
 
+let blobAvailable = true;
+
+export function setBlobAvailable(available: boolean): void {
+  blobAvailable = available;
+}
+
 function getContainerClient() {
   return blobServiceClient.getContainerClient(CONTAINER_NAME);
 }
@@ -30,7 +36,41 @@ export interface SampleSpecEntry {
   lastModified: string;
 }
 
+// --- In-memory fallback store for when Azure Blob Storage is unavailable ---
+
+const memoryStore = new Map<string, { content: string; lastModified: string }>();
+
+function memoryListSpecs(): SampleSpecEntry[] {
+  const specs: SampleSpecEntry[] = [];
+  for (const [name, entry] of memoryStore) {
+    specs.push({
+      name,
+      size: Buffer.byteLength(entry.content),
+      lastModified: entry.lastModified,
+    });
+  }
+  return specs;
+}
+
+function memoryGetSpecContent(name: string): string {
+  const entry = memoryStore.get(name);
+  if (!entry) throw new SpecNotFoundError(name);
+  return entry.content;
+}
+
+function memoryUploadSpec(name: string, content: string): void {
+  memoryStore.set(name, { content, lastModified: new Date().toISOString() });
+}
+
+function memoryDeleteSpec(name: string): void {
+  if (!memoryStore.delete(name)) throw new SpecNotFoundError(name);
+}
+
+// --- Public API ---
+
 export async function listSpecs(): Promise<SampleSpecEntry[]> {
+  if (!blobAvailable) return memoryListSpecs();
+
   const container = getContainerClient();
   const specs: SampleSpecEntry[] = [];
 
@@ -47,6 +87,8 @@ export async function listSpecs(): Promise<SampleSpecEntry[]> {
 }
 
 export async function getSpecContent(name: string): Promise<string> {
+  if (!blobAvailable) return memoryGetSpecContent(name);
+
   const container = getContainerClient();
   const blobClient = container.getBlobClient(name);
 
@@ -71,6 +113,11 @@ export async function uploadSpec(
   name: string,
   content: string,
 ): Promise<void> {
+  if (!blobAvailable) {
+    memoryUploadSpec(name, content);
+    return;
+  }
+
   const container = getContainerClient();
   const blockBlobClient = container.getBlockBlobClient(name);
 
@@ -80,6 +127,11 @@ export async function uploadSpec(
 }
 
 export async function deleteSpec(name: string): Promise<void> {
+  if (!blobAvailable) {
+    memoryDeleteSpec(name);
+    return;
+  }
+
   const container = getContainerClient();
   const blobClient = container.getBlobClient(name);
 

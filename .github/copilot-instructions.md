@@ -74,13 +74,15 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/client/lib/utils.ts` — CSS class name merge utility for component styling.
 - `src/client/vitest.config.ts` — Vitest configuration for frontend tests (jsdom environment).
 - `src/client/test-setup.ts` — Frontend test setup adding DOM assertion matchers.
+- `src/client/hooks/useSampleSpecs.ts` — Custom hook encapsulating sample specs state, fetching, and upload logic.
 - `src/server/services/logsService.ts` — Log retrieval service that reads *.log and events.jsonl blobs from a project's blob container.
 - `src/client/components/LogViewer.tsx` — Terminal-style log viewer with auto-scroll, pause/resume, loading, error, and empty states.
 - `src/client/pages/ProjectDetailPage.tsx` — Project detail page with header, log polling, and LogViewer integration.
+- `src/client/pages/NewProjectPage.tsx` — New project form with name input, spec picker dropdown, validation, and API integration.
 
 ## Architecture
 
-The Express server exposes API routes under `/api/*` and serves the React SPA as static files from a single container. Thin route handlers delegate to service modules that encapsulate business logic; services call Azure SDK clients (Blob Storage and Cosmos DB) that are initialized once at startup. The React frontend uses client-side routing via React Router (BrowserRouter) and communicates exclusively through the `/api/*` endpoints — it never touches Azure SDKs directly. Data flows inward: routes → services → Azure clients, with no reverse dependencies.
+The Express server exposes API routes under `/api/*` and serves the React SPA as static files from a single container. Thin route handlers delegate to service modules that encapsulate business logic; services call Azure SDK clients (Blob Storage and Cosmos DB) that are initialized once at startup. When Azure services are unavailable (e.g., Docker without credentials), services fall back to in-memory storage so CRUD operations still work (data does not persist across restarts). The React frontend uses client-side routing via React Router (BrowserRouter) and communicates exclusively through the `/api/*` endpoints — it never touches Azure SDKs directly. Data flows inward: routes → services → Azure clients, with no reverse dependencies.
 
 ## Testing conventions
 
@@ -106,3 +108,4 @@ The Express server exposes API routes under `/api/*` and serves the React SPA as
 - **shadcn/ui defaults.** Use shadcn/ui components with their default theme and neutral palette. Do not invent custom component styles.
 - **Toast for transient feedback.** Use Sonner toasts for success/error notifications on mutations. Use inline error states with retry buttons for failed data fetches.
 - **Partition-scoped queries.** Every Cosmos DB query includes `organizationId` in the filter to ensure single-partition reads.
+- **In-memory fallback for Azure services.** Service modules expose `setBlobAvailable(false)` / `setCosmosAvailable(false)` called at startup when Azure init fails. Each CRUD function checks the flag and routes to an in-memory Map-based store or the real Azure client.

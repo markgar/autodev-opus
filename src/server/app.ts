@@ -8,7 +8,7 @@ import projectsRouter from "./routes/projects.js";
 const app = express();
 const IS_DEV = process.env["NODE_ENV"] === "development";
 
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 app.use("/api", healthRouter);
 app.use("/api", sampleSpecsRouter);
 app.use("/api", projectsRouter);

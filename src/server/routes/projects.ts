@@ -28,7 +28,11 @@ projectsRouter.post("/projects", async (req, res) => {
 
   try {
     const project = await createProject(name.trim(), specName);
-    await ensureProjectContainer(project.id);
+    try {
+      await ensureProjectContainer(project.id);
+    } catch (error) {
+      console.warn("Failed to create blob container for project:", (error as Error).message);
+    }
     res.status(201).json(project);
   } catch (error) {
     console.error("POST /projects failed:", error);

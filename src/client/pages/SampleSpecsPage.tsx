@@ -1,79 +1,21 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Upload } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import SampleSpecsTable, { type SpecItem } from "@/components/SampleSpecsTable";
+import SampleSpecsTable from "@/components/SampleSpecsTable";
 import DeleteSpecDialog from "@/components/DeleteSpecDialog";
 import ViewSpecDialog from "@/components/ViewSpecDialog";
+import { useSampleSpecs } from "@/hooks/useSampleSpecs";
 
 export default function SampleSpecsPage() {
-  const [specs, setSpecs] = useState<SpecItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { specs, loading, error, uploading, refreshSpecs, uploadFiles } = useSampleSpecs();
   const [viewSpecName, setViewSpecName] = useState<string | null>(null);
   const [deleteSpecName, setDeleteSpecName] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  async function refreshSpecs() {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/sample-specs");
-      if (!res.ok) throw new Error("Failed to load specs");
-      const data = await res.json();
-      setSpecs(data);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to load specs";
-      setError(message);
-      toast.error(message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    refreshSpecs();
-  }, []);
-
-  async function handleUpload(files: FileList) {
-    const MAX_SPEC_SIZE = 1_048_576; // 1 MB
-    setUploading(true);
-    try {
-      for (const file of Array.from(files)) {
-        if (file.size > MAX_SPEC_SIZE) {
-          toast.error(`${file.name}: file too large (max 1 MB)`);
-          continue;
-        }
-        try {
-          const content = await file.text();
-          const res = await fetch("/api/sample-specs", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: file.name, content }),
-          });
-
-          if (!res.ok) {
-            const body = await res.json().catch(() => ({ message: "Upload failed" }));
-            throw new Error(body.message);
-          }
-
-          toast(`Uploaded ${file.name}`);
-        } catch (err) {
-          const message = err instanceof Error ? err.message : "Upload failed";
-          toast.error(`${file.name}: ${message}`);
-        }
-      }
-      await refreshSpecs();
-    } finally {
-      setUploading(false);
-    }
-  }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
-      await handleUpload(e.target.files);
+      await uploadFiles(e.target.files);
     }
     e.target.value = "";
   }
