@@ -38,9 +38,14 @@ export default function SampleSpecsPage() {
   }, []);
 
   async function handleUpload(files: FileList) {
+    const MAX_SPEC_SIZE = 1_048_576; // 1 MB
     setUploading(true);
     try {
       for (const file of Array.from(files)) {
+        if (file.size > MAX_SPEC_SIZE) {
+          toast.error(`${file.name}: file too large (max 1 MB)`);
+          continue;
+        }
         try {
           const content = await file.text();
           const res = await fetch("/api/sample-specs", {
