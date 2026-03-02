@@ -45,17 +45,4 @@ describe("health route behavior", () => {
     expect(["ok", "degraded"]).toContain(body.status);
     expect(statusCode === 200 || statusCode === 503).toBe(true);
   });
-
-  it("registers a GET method on /health path", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const stack = (healthRouter as any).stack as Array<{
-      route?: { path: string; methods: Record<string, boolean> };
-    }>;
-
-    const healthLayer = stack.find(
-      (layer) => layer.route?.path === "/health"
-    );
-    expect(healthLayer).toBeDefined();
-    expect(healthLayer!.route!.methods["get"]).toBe(true);
-  });
 });

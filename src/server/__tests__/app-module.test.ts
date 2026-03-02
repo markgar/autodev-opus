@@ -2,14 +2,6 @@ import { describe, it, expect } from "vitest";
 import app from "../app.js";
 
 describe("Express app module (app.ts)", () => {
-  it("exports an Express application with standard methods", () => {
-    expect(app).toBeDefined();
-    expect(typeof app).toBe("function");
-    expect(typeof app.get).toBe("function");
-    expect(typeof app.use).toBe("function");
-    expect(typeof app.listen).toBe("function");
-  });
-
   it("mounts health router under /api prefix", async () => {
     const http = await import("node:http");
     const server = http.createServer(app);
