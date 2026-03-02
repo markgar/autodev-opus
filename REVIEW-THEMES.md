@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Sidebar layout, navigation, React Router, and responsive shell
+Last updated: Sample specs blob storage service and CRUD API routes
 
 1. **Validate environment variables after parsing.** Never trust `parseInt(process.env.X)` without checking for `NaN` and range — fail fast with an actionable error message naming the env var.
 2. **Scope SPA catch-all routes to exclude `/api/*`.** A blanket `app.get("/{*splat}")` will serve HTML for unmatched API paths, masking 404 errors and confusing JSON-expecting clients.
@@ -17,3 +17,6 @@ Last updated: Sidebar layout, navigation, React Router, and responsive shell
 13. **Extract shared constants for cross-module magic strings.** When two or more modules reference the same literal (database name, container name, endpoint), define it once in a shared constants or config module to prevent divergence.
 14. **Resolve merge conflict markers before committing.** After any rebase or merge, grep for `<<<<<<<`, `=======`, `>>>>>>>` markers — unresolved conflicts silently corrupt files and produce garbled documentation.
 15. **Match documentation constraints to code validation.** When a config value has programmatic validation (regex, range check), ensure DEPLOY.md, README, and env-var tables describe the same constraints the code enforces.
+16. **Sanitize user-supplied resource names.** When a route param or request body field is used as a storage key (blob name, file path, DB id), validate it against a strict allowlist pattern — don't rely on `.endsWith()` alone.
+17. **Preserve structured error properties across service boundaries.** When wrapping Azure SDK or other library errors, keep the original `statusCode`/`code` properties instead of stringifying into a plain `Error` — route handlers need structured data to return correct HTTP status codes.
+18. **Bootstrap all required storage resources at startup.** When adding a new external dependency (blob container, DB table, queue), add initialization logic alongside existing init functions — don't assume resources exist.
