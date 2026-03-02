@@ -50,9 +50,9 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
 - `src/client/main.tsx` — React app entry point.
 - `src/client/App.tsx` — Root React component with Sonner `<Toaster />`.
-- `src/client/lib/utils.ts` — `cn()` helper combining clsx and tailwind-merge for className composition.
+- `src/client/lib/utils.ts` — CSS class name merge utility for component styling.
 - `src/client/vitest.config.ts` — Vitest configuration for frontend tests (jsdom environment).
-- `src/client/test-setup.ts` — Test setup file importing @testing-library/jest-dom matchers.
+- `src/client/test-setup.ts` — Frontend test setup adding DOM assertion matchers.
 
 ## Architecture
 
@@ -67,6 +67,8 @@ The Express server exposes API routes under `/api/*` and serves the React SPA as
 - **Prefer regression tests.** When a bug is found, write the test that would have caught it before fixing it. This is the highest-value test you can write.
 - **Don't test I/O wrappers.** Functions that just read a file and call a pure helper don't need their own tests — test the pure helper directly.
 - **No mocking unless unavoidable.** Extract pure functions for testability so you don't need mocks. If you find yourself mocking, consider whether you should be testing a different function.
+- **Vitest is the test runner.** `npm test` runs both server and client suites. `npm run test:server` and `npm run test:client` run them individually.
+- **Frontend tests use Testing Library.** `@testing-library/react` with jsdom environment. DOM assertion matchers from `@testing-library/jest-dom` are globally available via the test setup file.
 
 ## Conventions
 
