@@ -39,12 +39,16 @@ export default function ViewSpecDialog({
         if (!res.ok) throw new Error("Failed to load spec");
         return res.text();
       })
-      .then((text) => setContent(text))
+      .then((text) => {
+        if (!controller.signal.aborted) setContent(text);
+      })
       .catch((err) => {
         if (err.name === "AbortError") return;
         setError(err instanceof Error ? err.message : "Failed to load spec");
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
 
     return () => controller.abort();
   }, [open, specName]);
