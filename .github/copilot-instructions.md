@@ -51,7 +51,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/client/App.tsx` — Root React component with Sonner `<Toaster />`.
 - `src/client/lib/utils.ts` — `cn()` helper combining clsx and tailwind-merge for className composition.
 - `src/client/vitest.config.ts` — Vitest configuration for frontend tests (jsdom environment).
-- `src/client/test-setup.ts` — Test setup file importing jest-dom matchers.
+- `src/client/test-setup.ts` — Test setup file importing @testing-library/jest-dom matchers.
 
 ## Architecture
 
