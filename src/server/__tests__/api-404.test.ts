@@ -23,10 +23,12 @@ describe("API 404 handler", () => {
 });
 
 describe("API routing integration", () => {
-  it("GET /api/health returns 200 alongside the 404 handler", async () => {
+  it("GET /api/health is routed to the health handler (not the 404 handler)", async () => {
     const res = await request(app).get("/api/health");
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual({ status: "ok" });
+    // Health endpoint returns 200 when Azure is reachable, 503 when degraded
+    expect([200, 503]).toContain(res.status);
+    expect(res.body).toHaveProperty("status");
+    expect(res.body).toHaveProperty("checks");
   });
 
   it("does not intercept valid /api/health with 404 handler", async () => {
@@ -34,7 +36,8 @@ describe("API routing integration", () => {
       request(app).get("/api/health"),
       request(app).get("/api/nonexistent"),
     ]);
-    expect(healthRes.status).toBe(200);
+    // Health returns 200 or 503 depending on Azure availability, never 404
+    expect([200, 503]).toContain(healthRes.status);
     expect(unknownRes.status).toBe(404);
   });
 });

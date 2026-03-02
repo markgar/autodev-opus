@@ -20,7 +20,11 @@
 |----------|---------|-------------|
 | `PORT` | `3000` | Port the Express server listens on inside the container |
 | `NODE_ENV` | — | Set to `production` for static file serving; `development` disables SPA serving |
+<<<<<<< HEAD
 | `STAMP_ID` | `qqq` | 3-letter stamp ID. Derives storage account name (`stautodev{stampId}`) and Cosmos account (`cosmos-autodev-{stampId}`) |
+=======
+| `STAMP_ID` | `qqq` | 3-letter stamp ID. Derives storage account (`stautodev{stampId}`) and Cosmos account (`cosmos-autodev-{stampId}`) |
+>>>>>>> 4111844 ([validator] Fix health endpoint tests for Azure-aware behavior and update DEPLOY.md)
 
 ## Port Mappings
 
@@ -29,14 +33,17 @@
 
 ## Startup Sequence
 
-1. No database or external services needed for the scaffolding milestone.
-2. `docker compose build` then `docker compose up -d`
-3. App is healthy immediately — no warm-up needed.
+1. `docker compose build` then `docker compose up -d`
+2. On startup, the server calls `initCosmos()` which connects to Azure Cosmos DB to create the `autodev` database and `items` container (idempotent `createIfNotExists`).
+3. **Without Azure credentials, the server will exit with code 1.** This is expected in CI/local environments without Azure access. The app cannot function without Cosmos DB.
+4. With valid Azure credentials (managed identity, az login, or env vars), the server starts and listens on the configured port.
 
 ## Health Check
 
 - **Endpoint:** `GET /api/health`
-- **Expected response:** HTTP 200 with JSON body `{"status":"ok"}`
+- **Healthy response:** HTTP 200 with JSON body `{"status":"ok","checks":{"cosmosDb":"connected","blobStorage":"connected"}}`
+- **Degraded response:** HTTP 503 with JSON body `{"status":"degraded","checks":{"cosmosDb":"unavailable","blobStorage":"unavailable"}}`
+- The health endpoint checks actual connectivity to Cosmos DB and Blob Storage. Without Azure credentials, it returns 503.
 
 ## Running Playwright E2E Tests
 
@@ -75,5 +82,10 @@ npm test
 6. **Server tsconfig excludes tests:** `src/server/tsconfig.json` must have `"exclude": ["./**/__tests__/**"]` to prevent test files from being compiled during `tsc` production build. Test files may import modules differently than the app entry point.
 7. **App code split:** The Express app is defined in `src/server/app.ts` (default export), while `src/server/index.ts` only imports the app, configures the port, and calls `listen()`. Tests that inspect the Express app should import from `app.ts`, not `index.ts`.
 8. **build-output tests need dist/:** The `build-output.test.ts` server tests check for files in `dist/`. Run `npm run build` before `npm test` or these tests will fail.
+<<<<<<< HEAD
 9. **Azure SDKs in production image:** `@azure/storage-blob`, `@azure/cosmos`, and `@azure/identity` are production dependencies, so they are included in the production Docker image (not pruned by `--omit=dev`).
 10. **API 404 handler:** Unknown `/api/*` paths return `{ "message": "Not found" }` (JSON 404), not the SPA's index.html. The handler is registered after named API routes but before the SPA catch-all in `app.ts`.
+=======
+9. **Cosmos DB required for startup:** Since milestone 02b, the server calls `initCosmos()` before `app.listen()`. Without Azure credentials, the server exits with code 1. Tests that need the Express app should import from `app.ts` (no side effects), not `index.ts` (which calls initCosmos and listen).
+10. **Health endpoint checks Azure:** The health endpoint at `/api/health` now performs real connectivity checks against Cosmos DB and Blob Storage. It returns 503 (degraded) when Azure services are unreachable, not 200. Tests should accept both 200 and 503 status codes.
+>>>>>>> 4111844 ([validator] Fix health endpoint tests for Azure-aware behavior and update DEPLOY.md)
