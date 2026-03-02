@@ -7,6 +7,8 @@ interface LogViewerProps {
   loading: boolean;
   error: string | null;
   onRetry?: () => void;
+  paused?: boolean;
+  onTogglePause?: () => void;
 }
 
 const SCROLL_THRESHOLD = 50;
