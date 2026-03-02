@@ -21,3 +21,17 @@ export async function listProjects(): Promise<Project[]> {
     throw new Error(`Failed to list projects: ${message}`);
   }
 }
+
+export async function getProjectById(id: string): Promise<Project | null> {
+  try {
+    const { resource } = await container.item(id, "default").read<Project>();
+    return resource ?? null;
+  } catch (error) {
+    const code = (error as { code?: number | string }).code;
+    if (code === 404 || code === "NotFound") {
+      return null;
+    }
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to get project "${id}": ${message}`);
+  }
+}
