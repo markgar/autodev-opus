@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Projects Cosmos DB service and API routes
+Last updated: Logs API backend, project detail page, and log viewer component
 
 1. **Validate environment variables after parsing.** Never trust `parseInt(process.env.X)` without checking for `NaN` and range — fail fast with an actionable error message naming the env var.
 2. **Scope SPA catch-all routes to exclude `/api/*`.** A blanket `app.get("/{*splat}")` will serve HTML for unmatched API paths, masking 404 errors and confusing JSON-expecting clients.
@@ -25,3 +25,5 @@ Last updated: Projects Cosmos DB service and API routes
 21. **Extract custom hooks when page components exceed ~60 lines.** When a React page mixes state management, data fetching, mutation logic, and rendering, extract the non-rendering concerns into a custom hook to keep the component focused on UI.
 22. **Update deployment docs when fixing the issues they describe.** When a code change fixes a limitation documented in DEPLOY.md Known Gotchas or README, update the documentation in the same commit — stale "not supported" notes actively mislead developers.
 23. **Extract shared test mock factories when the same mock appears in 2+ files.** Module-scope SDK initialization forces every importing test to replicate the full mock chain — extract mock objects into a shared helper to prevent copy-paste drift and reduce update burden.
+24. **Apply established resilience patterns to every service uniformly.** When the codebase has an in-memory fallback for some services, apply the same pattern to every service that uses the same external dependency — partial coverage creates inconsistent error behavior across related endpoints.
+25. **Return generic messages in 500 API responses.** Never expose raw SDK or library error strings to the client — they leak implementation details and may contain sensitive information. Use `"Internal server error"` and log the real error server-side.
