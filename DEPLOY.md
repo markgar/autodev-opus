@@ -20,11 +20,7 @@
 |----------|---------|-------------|
 | `PORT` | `3000` | Port the Express server listens on inside the container |
 | `NODE_ENV` | — | Set to `production` for static file serving; `development` disables SPA serving |
-<<<<<<< HEAD
 | `STAMP_ID` | `qqq` | 3-letter stamp ID. Derives storage account name (`stautodev{stampId}`) and Cosmos account (`cosmos-autodev-{stampId}`) |
-=======
-| `STAMP_ID` | `qqq` | 3-letter stamp ID. Derives storage account (`stautodev{stampId}`) and Cosmos account (`cosmos-autodev-{stampId}`) |
->>>>>>> 4111844 ([validator] Fix health endpoint tests for Azure-aware behavior and update DEPLOY.md)
 
 ## Port Mappings
 
@@ -33,16 +29,9 @@
 
 ## Startup Sequence
 
-<<<<<<< HEAD
 1. `docker compose build` then `docker compose up -d`
-2. On startup, the server calls `initCosmos()` which connects to Azure Cosmos DB to create the `autodev` database and `items` container (idempotent `createIfNotExists`).
-3. **Without Azure credentials, the server will exit with code 1.** This is expected in CI/local environments without Azure access. The app cannot function without Cosmos DB.
-4. With valid Azure credentials (managed identity, az login, or env vars), the server starts and listens on the configured port.
-=======
-1. The server attempts Cosmos DB initialization on startup. Without Azure, it logs a warning and continues (non-fatal).
-2. `docker compose build` then `docker compose up -d`
+2. On startup, the server calls `initCosmos()` which attempts to connect to Azure Cosmos DB. If Azure is unavailable, it logs a warning and continues (non-fatal).
 3. App serves requests within ~2 seconds. Health endpoint returns 503 (degraded) without Azure but SPA and API routes are functional.
->>>>>>> b719225 ([validator] Validate milestone 03: app shell and routing)
 
 ## Health Check
 
@@ -88,16 +77,11 @@ npm test
 6. **Server tsconfig excludes tests:** `src/server/tsconfig.json` must have `"exclude": ["./**/__tests__/**"]` to prevent test files from being compiled during `tsc` production build. Test files may import modules differently than the app entry point.
 7. **App code split:** The Express app is defined in `src/server/app.ts` (default export), while `src/server/index.ts` only imports the app, configures the port, and calls `listen()`. Tests that inspect the Express app should import from `app.ts`, not `index.ts`.
 8. **build-output tests need dist/:** The `build-output.test.ts` server tests check for files in `dist/`. Run `npm run build` before `npm test` or these tests will fail.
-<<<<<<< HEAD
 9. **Azure SDKs in production image:** `@azure/storage-blob`, `@azure/cosmos`, and `@azure/identity` are production dependencies, so they are included in the production Docker image (not pruned by `--omit=dev`).
 10. **API 404 handler:** Unknown `/api/*` paths return `{ "message": "Not found" }` (JSON 404), not the SPA's index.html. The handler is registered after named API routes but before the SPA catch-all in `app.ts`.
-<<<<<<< HEAD
-=======
-9. **Cosmos DB required for startup:** Since milestone 02b, the server calls `initCosmos()` before `app.listen()`. Without Azure credentials, the server exits with code 1. Tests that need the Express app should import from `app.ts` (no side effects), not `index.ts` (which calls initCosmos and listen).
-10. **Health endpoint checks Azure:** The health endpoint at `/api/health` now performs real connectivity checks against Cosmos DB and Blob Storage. It returns 503 (degraded) when Azure services are unreachable, not 200. Tests should accept both 200 and 503 status codes.
->>>>>>> 4111844 ([validator] Fix health endpoint tests for Azure-aware behavior and update DEPLOY.md)
-=======
 11. **Cosmos DB init is non-fatal:** `src/server/index.ts` catches Cosmos DB initialization errors and logs a warning instead of exiting. This allows the app to start in environments without Azure connectivity (Docker, CI).
 12. **react-router-dom required:** The client depends on `react-router-dom` (added in milestone 03). Run `npm install` before running client tests locally — the Docker build handles this via `npm ci`.
 13. **SPA routing:** All client routes (/, /projects/new, /projects/:id, /admin/sample-specs) are served by the Express catch-all `/{*splat}` handler which returns index.html. React Router handles client-side navigation.
->>>>>>> b719225 ([validator] Validate milestone 03: app shell and routing)
+14. **Sample specs CRUD requires Azure Blob Storage:** The `/api/sample-specs` endpoints (GET list, GET by name, POST, DELETE) all require Azure Blob Storage connectivity. Without credentials, they return 500 with `ChainedTokenCredential authentication failed`. The `blobClient.ts` module does not support Azurite or connection string override — it hardcodes the cloud URL pattern `https://stautodev{stampId}.blob.core.windows.net`. To test CRUD locally, the blob client needs to support `AZURE_STORAGE_CONNECTION_STRING` for Azurite. See issue #69.
+15. **STAMP_ID validation:** `config.ts` validates STAMP_ID with `/^[a-z0-9]{1,16}$/`. Invalid values cause a startup crash. Default is `qqq`.
+16. **Sample specs route registration:** `sampleSpecsRouter` is registered in `app.ts` with `app.use("/api", sampleSpecsRouter)` after healthRouter and before the API 404 handler. Routes: GET/POST `/sample-specs`, GET/DELETE `/sample-specs/:name`.
