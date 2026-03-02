@@ -1,4 +1,5 @@
 import app from "./app.js";
+import { initCosmos } from "./azure/initCosmos.js";
 
 function parsePort(raw: string | undefined): number {
   const port = parseInt(raw ?? "3000", 10);
@@ -9,6 +10,13 @@ function parsePort(raw: string | undefined): number {
 }
 
 const PORT = parsePort(process.env["PORT"]);
+
+try {
+  await initCosmos();
+} catch (error) {
+  console.error("Failed to initialize Cosmos DB:", error);
+  process.exit(1);
+}
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

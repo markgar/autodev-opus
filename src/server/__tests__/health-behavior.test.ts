@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import healthRouter from "../routes/health.js";
 
 describe("health route behavior", () => {
-  it("responds with { status: ok } and 200 status code", async () => {
+  it("responds with structured health check response", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const stack = (healthRouter as any).stack as Array<{
       route?: {
@@ -33,9 +33,17 @@ describe("health route behavior", () => {
       },
     };
 
-    handler({}, mockRes);
+    // Handler is async — must await it
+    await handler({}, mockRes);
 
-    expect(jsonBody).toEqual({ status: "ok" });
+    // Without Azure credentials, checks will be unavailable
+    expect(jsonBody).toHaveProperty("status");
+    expect(jsonBody).toHaveProperty("checks");
+    const body = jsonBody as { status: string; checks: Record<string, string> };
+    expect(body.checks).toHaveProperty("cosmosDb");
+    expect(body.checks).toHaveProperty("blobStorage");
+    expect(["ok", "degraded"]).toContain(body.status);
+    expect(statusCode === 200 || statusCode === 503).toBe(true);
   });
 
   it("registers a GET method on /health path", () => {
