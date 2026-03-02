@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -8,7 +9,27 @@ interface LogViewerProps {
   onRetry?: () => void;
 }
 
+const SCROLL_THRESHOLD = 50;
+
 export default function LogViewer({ lines, loading, error, onRetry }: LogViewerProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < SCROLL_THRESHOLD;
+    setIsAtBottom(atBottom);
+  }, []);
+
+  useEffect(() => {
+    if (!isAtBottom) return;
+    const el = scrollRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [lines, isAtBottom]);
+
   if (error) {
     return (
       <div className="bg-zinc-900 text-zinc-100 font-mono text-sm rounded-lg border border-zinc-700 p-4">
@@ -47,7 +68,11 @@ export default function LogViewer({ lines, loading, error, onRetry }: LogViewerP
 
   return (
     <div className="relative">
-      <div className="bg-zinc-900 text-zinc-100 font-mono text-sm rounded-lg border border-zinc-700 p-4 max-h-[600px] overflow-y-auto">
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="bg-zinc-900 text-zinc-100 font-mono text-sm rounded-lg border border-zinc-700 p-4 max-h-[600px] overflow-y-auto"
+      >
         {lines.map((line, index) => (
           <div key={index} className="whitespace-pre-wrap break-all leading-relaxed">
             {line}
