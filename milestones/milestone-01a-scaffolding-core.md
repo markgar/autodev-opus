@@ -8,7 +8,7 @@
 
 ## Tasks
 
-- [ ] Initialize root package.json (name: "autodev", private: true, type: "module") and create tsconfig.base.json with strict mode, ES2022 target, module NodeNext, and shared compiler options that server and client tsconfigs will extend
+- [x] Initialize root package.json (name: "autodev", private: true, type: "module") and create tsconfig.base.json with strict mode, ES2022 target, module NodeNext, and shared compiler options that server and client tsconfigs will extend
 - [ ] Scaffold Express server entry point: create src/server/tsconfig.json extending base, install express and @types/express, create src/server/index.ts that initializes an Express app and listens on PORT env var (default 3000)
 - [ ] Add GET /api/health route in src/server/routes/health.ts returning JSON `{ "status": "ok" }` with 200 status, register it in the Express app
 - [ ] Scaffold React + Vite client: install react, react-dom, @types/react, @types/react-dom, vite, @vitejs/plugin-react, create vite.config.ts in project root (root: "src/client", build outDir: "../../dist/client"), create src/client/index.html, src/client/main.tsx, src/client/App.tsx with a placeholder heading "AutoDev", create src/client/tsconfig.json extending base with jsx: "react-jsx" and dom lib
