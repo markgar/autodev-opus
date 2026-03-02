@@ -1,0 +1,8 @@
+{
+  "name": "autodev",
+  "private": true,
+  "type": "module",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
+}
