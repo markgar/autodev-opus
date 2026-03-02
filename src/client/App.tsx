@@ -1,5 +1,7 @@
 export default function App() {
   return (
-    <h1>AutoDev</h1>
+    <div className="min-h-screen flex items-center justify-center">
+      <h1 className="text-4xl font-bold">AutoDev</h1>
+    </div>
   );
 }

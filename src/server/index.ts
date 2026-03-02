@@ -1,6 +1,6 @@
+import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import express from "express";
 import healthRouter from "./routes/health.js";
 
 const app = express();
@@ -12,12 +12,12 @@ app.use(healthRouter);
 
 if (!IS_DEV) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  const clientDir = path.join(__dirname, "..", "client");
+  const clientDistPath = path.join(__dirname, "..", "client");
 
-  app.use(express.static(clientDir));
+  app.use(express.static(clientDistPath));
 
   app.get("/{*splat}", (_req, res) => {
-    res.sendFile(path.join(clientDir, "index.html"));
+    res.sendFile(path.join(clientDistPath, "index.html"));
   });
 }
 
