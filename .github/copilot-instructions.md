@@ -40,13 +40,18 @@ Server and client are siblings — server code never imports from `client/` and 
 - `BACKLOG.md` — Ordered list of milestones with dependency information.
 - `JOURNEYS.md` — User journey descriptions.
 - `README.md` — Project overview and getting-started guide.
-- `package.json` — Root package manifest with build, dev, and start scripts.
+- `package.json` — Root package manifest with build, dev, test, and start scripts.
 - `tsconfig.base.json` — Shared TypeScript compiler options extended by server and client tsconfigs.
-- `vite.config.ts` — Vite configuration for the React client build, with Tailwind and API proxy.
+- `vite.config.ts` — Vite configuration for the React client build, with Tailwind, `@/` alias, and API proxy.
+- `components.json` — shadcn/ui CLI configuration.
 - `src/server/index.ts` — Express server entry point (API routes, static file serving in production).
 - `src/server/routes/health.ts` — Health check route returning `{ status: "ok" }`.
+- `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
 - `src/client/main.tsx` — React app entry point.
-- `src/client/App.tsx` — Root React component.
+- `src/client/App.tsx` — Root React component with Sonner `<Toaster />`.
+- `src/client/lib/utils.ts` — `cn()` helper combining clsx and tailwind-merge.
+- `src/client/vitest.config.ts` — Vitest configuration for frontend tests (jsdom environment).
+- `src/client/test-setup.ts` — Test setup importing @testing-library/jest-dom matchers.
 
 ## Architecture
 
