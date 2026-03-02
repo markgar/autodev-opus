@@ -15,16 +15,9 @@ describe("App component integration", () => {
     expect(wrapper?.className).toContain("min-h-screen");
   });
 
-  it("includes Sonner Toaster component in the render tree", async () => {
-    const fs = await import("node:fs");
-    const path = await import("node:path");
-    const { fileURLToPath } = await import("node:url");
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const source = fs.readFileSync(
-      path.join(__dirname, "..", "App.tsx"),
-      "utf-8"
-    );
-    expect(source).toContain('import { Toaster } from "sonner"');
-    expect(source).toContain("<Toaster />");
+  it("includes Sonner Toaster component in the render tree", () => {
+    render(<App />);
+    const toasters = screen.getAllByRole("region", { name: /Notifications/ });
+    expect(toasters.length).toBeGreaterThan(0);
   });
 });
