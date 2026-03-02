@@ -46,8 +46,12 @@ Server and client are siblings — server code never imports from `client/` and 
 - `components.json` — shadcn/ui CLI configuration for component generation.
 - `src/server/app.ts` — Express app configuration (middleware, routes, API 404 handler, static serving). No side effects.
 - `src/server/index.ts` — Server startup entry point (port parsing, listen call).
-- `src/server/routes/health.ts` — Health check route returning `{ status: "ok" }`.
+- `src/server/routes/health.ts` — Health check route that verifies Cosmos DB and Blob Storage connectivity.
 - `src/server/config.ts` — Stamp configuration: reads `STAMP_ID` env var, exports derived Azure resource names.
+- `src/server/azure/credential.ts` — Shared `DefaultAzureCredential` instance used by all Azure SDK clients.
+- `src/server/azure/blobClient.ts` — Shared `BlobServiceClient` instance for Azure Blob Storage.
+- `src/server/azure/cosmosClient.ts` — Shared `CosmosClient` instance for Azure Cosmos DB.
+- `src/server/azure/initCosmos.ts` — Cosmos DB initialization: creates database and container if they don't exist.
 - `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
 - `src/client/main.tsx` — React app entry point.
 - `src/client/App.tsx` — Root React component with Sonner `<Toaster />`.

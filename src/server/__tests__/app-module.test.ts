@@ -35,8 +35,10 @@ describe("Express app module (app.ts)", () => {
       }
     );
 
-    expect(response.status).toBe(200);
-    expect(JSON.parse(response.body)).toEqual({ status: "ok" });
+    expect([200, 503]).toContain(response.status);
+    const body = JSON.parse(response.body);
+    expect(body).toHaveProperty("status");
+    expect(body).toHaveProperty("checks");
   });
 
   it("parses JSON request bodies via express.json middleware", async () => {
