@@ -6,7 +6,12 @@
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "noEmit": true
+    "outDir": "../../dist/client",
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": ["./**/*.ts", "./**/*.tsx"]
 }
