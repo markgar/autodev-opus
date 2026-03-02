@@ -44,8 +44,10 @@ Server and client are siblings — server code never imports from `client/` and 
 - `tsconfig.base.json` — Shared TypeScript compiler options extended by server and client tsconfigs.
 - `vite.config.ts` — Vite configuration for the React client build, with Tailwind, `@/` alias, and API proxy.
 - `components.json` — shadcn/ui CLI configuration for component generation.
-- `src/server/index.ts` — Express server entry point (API routes, static file serving in production).
+- `src/server/index.ts` — Express server entry point that starts the HTTP listener.
+- `src/server/app.ts` — Express app setup with route registration, API 404 handler, and static serving.
 - `src/server/routes/health.ts` — Health check route returning `{ status: "ok" }`.
+- `src/server/config.ts` — Stamp configuration: reads `STAMP_ID` env var, exports derived Azure resource names.
 - `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
 - `src/client/main.tsx` — React app entry point.
 - `src/client/App.tsx` — Root React component with Sonner `<Toaster />`.
