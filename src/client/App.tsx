@@ -5,6 +5,7 @@ import DashboardPage from "@/pages/DashboardPage";
 import NewProjectPage from "@/pages/NewProjectPage";
 import ProjectDetailPage from "@/pages/ProjectDetailPage";
 import SampleSpecsPage from "@/pages/SampleSpecsPage";
+import NotFoundPage from "@/pages/NotFoundPage";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
             <Route path="projects/new" element={<NewProjectPage />} />
             <Route path="projects/:id" element={<ProjectDetailPage />} />
             <Route path="admin/sample-specs" element={<SampleSpecsPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

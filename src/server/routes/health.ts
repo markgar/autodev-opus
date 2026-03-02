@@ -4,22 +4,18 @@ import { blobServiceClient } from "../azure/blobClient.js";
 
 const healthRouter = Router();
 
+const HEALTH_TIMEOUT_MS = 5000;
+
 healthRouter.get("/health", async (_req, res) => {
-  const checks: Record<string, string> = {};
+  const [cosmosResult, blobResult] = await Promise.allSettled([
+    cosmosClient.getDatabaseAccount({ abortSignal: AbortSignal.timeout(HEALTH_TIMEOUT_MS) }),
+    blobServiceClient.getProperties({ abortSignal: AbortSignal.timeout(HEALTH_TIMEOUT_MS) }),
+  ]);
 
-  try {
-    await cosmosClient.getDatabaseAccount();
-    checks["cosmosDb"] = "connected";
-  } catch {
-    checks["cosmosDb"] = "unavailable";
-  }
-
-  try {
-    await blobServiceClient.getProperties();
-    checks["blobStorage"] = "connected";
-  } catch {
-    checks["blobStorage"] = "unavailable";
-  }
+  const checks = {
+    cosmosDb: cosmosResult.status === "fulfilled" ? "connected" : "unavailable",
+    blobStorage: blobResult.status === "fulfilled" ? "connected" : "unavailable",
+  };
 
   const allHealthy = Object.values(checks).every((v) => v === "connected");
   const status = allHealthy ? "ok" : "degraded";

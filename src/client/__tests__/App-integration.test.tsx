@@ -9,10 +9,10 @@ describe("App component integration", () => {
     expect(screen.getByText("AutoDev")).toBeInTheDocument();
   });
 
-  it("applies min-h-screen layout class for full viewport height", () => {
+  it("applies min-h-svh layout class for full viewport height", () => {
     const { container } = render(<App />);
     const wrapper = container.firstElementChild;
-    expect(wrapper?.className).toContain("min-h-screen");
+    expect(wrapper?.className).toContain("min-h-svh");
   });
 
   it("includes Sonner Toaster component in the render tree", () => {

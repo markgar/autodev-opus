@@ -8,5 +8,7 @@ if (!/^[a-z0-9]{1,16}$/.test(stampId)) {
 
 const storageAccountName = `stautodev${stampId}`;
 const cosmosAccountName = `cosmos-autodev-${stampId}`;
+const cosmosDatabaseName = "autodev";
+const cosmosContainerName = "items";
 
-export { stampId, storageAccountName, cosmosAccountName };
+export { stampId, storageAccountName, cosmosAccountName, cosmosDatabaseName, cosmosContainerName };
