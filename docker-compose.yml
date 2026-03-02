@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8713:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.52.0-noble
+    depends_on:
+      - app
+    volumes:
+      - .:/repo
+    working_dir: /repo/e2e
+    entrypoint: ["sh", "-c"]
+    command: ["tail -f /dev/null"]
