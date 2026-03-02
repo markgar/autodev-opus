@@ -54,6 +54,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/azure/blobClient.ts` — Shared `BlobServiceClient` instance for Azure Blob Storage.
 - `src/server/azure/cosmosClient.ts` — Shared `CosmosClient` instance for Azure Cosmos DB.
 - `src/server/azure/initCosmos.ts` — Cosmos DB initialization: creates database and container if they don't exist.
+- `src/server/models/project.ts` — Project entity interface for Cosmos DB documents.
 - `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
 - `src/client/main.tsx` — React app entry point.
 - `src/client/App.tsx` — Root React component with BrowserRouter, route definitions, catch-all 404 route, and Sonner `<Toaster />`.
