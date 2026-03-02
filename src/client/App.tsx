@@ -1,10 +1,25 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
+import AppLayout from "@/components/AppLayout";
+import DashboardPage from "@/pages/DashboardPage";
+import NewProjectPage from "@/pages/NewProjectPage";
+import ProjectDetailPage from "@/pages/ProjectDetailPage";
+import SampleSpecsPage from "@/pages/SampleSpecsPage";
 
 export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-4xl font-bold">AutoDev</h1>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<AppLayout />}>
+            <Route index element={<DashboardPage />} />
+            <Route path="projects/new" element={<NewProjectPage />} />
+            <Route path="projects/:id" element={<ProjectDetailPage />} />
+            <Route path="admin/sample-specs" element={<SampleSpecsPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
       <Toaster />
-    </div>
+    </>
   );
 }

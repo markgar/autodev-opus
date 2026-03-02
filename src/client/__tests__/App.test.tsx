@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/react";
 import App from "../App";
 
 describe("App component", () => {
-  it("renders the AutoDev heading", () => {
+  it("renders the AutoDev heading in sidebar", () => {
     render(<App />);
     expect(screen.getByText("AutoDev")).toBeInTheDocument();
   });

@@ -54,14 +54,17 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/azure/initCosmos.ts` — Cosmos DB initialization: creates database and container if they don't exist.
 - `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
 - `src/client/main.tsx` — React app entry point.
-- `src/client/App.tsx` — Root React component with Sonner `<Toaster />`.
+- `src/client/App.tsx` — Root React component with BrowserRouter, route definitions, and Sonner `<Toaster />`.
+- `src/client/components/AppSidebar.tsx` — Sidebar navigation with grouped menu items and active highlighting.
+- `src/client/components/AppLayout.tsx` — Root layout wrapping sidebar and routed page content.
+- `src/client/pages/` — Convention directory for page-level route components.
 - `src/client/lib/utils.ts` — CSS class name merge utility for component styling.
 - `src/client/vitest.config.ts` — Vitest configuration for frontend tests (jsdom environment).
 - `src/client/test-setup.ts` — Frontend test setup adding DOM assertion matchers.
 
 ## Architecture
 
-The Express server exposes API routes under `/api/*` and serves the React SPA as static files from a single container. Thin route handlers delegate to service modules that encapsulate business logic; services call Azure SDK clients (Blob Storage and Cosmos DB) that are initialized once at startup. The React frontend communicates exclusively through the `/api/*` endpoints — it never touches Azure SDKs directly. Data flows inward: routes → services → Azure clients, with no reverse dependencies.
+The Express server exposes API routes under `/api/*` and serves the React SPA as static files from a single container. Thin route handlers delegate to service modules that encapsulate business logic; services call Azure SDK clients (Blob Storage and Cosmos DB) that are initialized once at startup. The React frontend uses client-side routing via React Router (BrowserRouter) and communicates exclusively through the `/api/*` endpoints — it never touches Azure SDKs directly. Data flows inward: routes → services → Azure clients, with no reverse dependencies.
 
 ## Testing conventions
 
