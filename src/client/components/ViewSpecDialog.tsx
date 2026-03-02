@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Download, Loader2, RotateCw } from "lucide-react";
 import {
   Dialog,
@@ -23,31 +23,28 @@ export default function ViewSpecDialog({
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const controllerRef = useRef<AbortController | null>(null);
 
   const fetchSpec = useCallback(
-    (signal?: AbortSignal) => {
+    async (signal?: AbortSignal) => {
       if (!specName) return;
       setLoading(true);
       setError(null);
       setContent("");
-
-      fetch(`/api/sample-specs/${encodeURIComponent(specName)}`, { signal })
-        .then(async (res) => {
-          if (!res.ok) throw new Error("Failed to load spec");
-          return res.text();
-        })
-        .then((text) => {
-          if (!signal?.aborted) setContent(text);
-        })
-        .catch((err) => {
-          if (err.name === "AbortError") return;
-          if (!signal?.aborted) {
-            setError(err instanceof Error ? err.message : "Failed to load spec");
-          }
-        })
-        .finally(() => {
-          if (!signal?.aborted) setLoading(false);
-        });
+      try {
+        const res = await fetch(
+          `/api/sample-specs/${encodeURIComponent(specName)}`,
+          { signal },
+        );
+        if (!res.ok) throw new Error("Failed to load spec");
+        const text = await res.text();
+        setContent(text);
+      } catch (err) {
+        if ((err as Error).name === "AbortError") return;
+        setError(err instanceof Error ? err.message : "Failed to load spec");
+      } finally {
+        setLoading(false);
+      }
     },
     [specName],
   );
@@ -55,14 +52,19 @@ export default function ViewSpecDialog({
   useEffect(() => {
     if (!open || !specName) return;
 
+    controllerRef.current?.abort();
     const controller = new AbortController();
+    controllerRef.current = controller;
     fetchSpec(controller.signal);
 
     return () => controller.abort();
   }, [open, specName, fetchSpec]);
 
   function handleRetry() {
-    fetchSpec();
+    controllerRef.current?.abort();
+    const controller = new AbortController();
+    controllerRef.current = controller;
+    fetchSpec(controller.signal);
   }
 
   function handleDownload() {
