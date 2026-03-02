@@ -118,17 +118,17 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="flex flex-col gap-4 md:gap-6">
+      <div className="flex flex-col gap-1">
         <Link
           to="/"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-2"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </Link>
-        <h1 className="text-2xl font-bold">{project.name}</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="text-xl md:text-2xl font-bold">{project.name}</h1>
+        <p className="text-xs md:text-sm text-muted-foreground">
           Created {new Date(project.createdAt).toLocaleDateString(undefined, {
             year: "numeric",
             month: "long",
@@ -137,14 +137,16 @@ export default function ProjectDetailPage() {
         </p>
       </div>
 
-      <LogViewer
-        lines={lines}
-        loading={logsLoading}
-        error={logsError}
-        onRetry={() => fetchLogs(true)}
-        paused={paused}
-        onTogglePause={() => setPaused((p) => !p)}
-      />
+      <div className="h-[calc(100vh-14rem)] md:h-[calc(100vh-12rem)]">
+        <LogViewer
+          lines={lines}
+          loading={logsLoading}
+          error={logsError}
+          onRetry={() => fetchLogs(true)}
+          paused={paused}
+          onTogglePause={() => setPaused((p) => !p)}
+        />
+      </div>
     </div>
   );
 }
