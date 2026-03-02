@@ -40,8 +40,13 @@ Server and client are siblings — server code never imports from `client/` and 
 - `BACKLOG.md` — Ordered list of milestones with dependency information.
 - `JOURNEYS.md` — User journey descriptions.
 - `README.md` — Project overview and getting-started guide.
-
-> **Note:** The project has not been bootstrapped yet. This section will be updated as source files are created.
+- `package.json` — Root package manifest with build, dev, and start scripts.
+- `tsconfig.base.json` — Shared TypeScript compiler options extended by server and client tsconfigs.
+- `vite.config.ts` — Vite configuration for the React client build, with Tailwind and API proxy.
+- `src/server/index.ts` — Express server entry point (API routes, static file serving in production).
+- `src/server/routes/health.ts` — Health check route returning `{ status: "ok" }`.
+- `src/client/main.tsx` — React app entry point.
+- `src/client/App.tsx` — Root React component.
 
 ## Architecture
 
