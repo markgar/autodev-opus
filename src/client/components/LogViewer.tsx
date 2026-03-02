@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface LogViewerProps {
@@ -13,7 +13,7 @@ interface LogViewerProps {
 
 const SCROLL_THRESHOLD = 50;
 
-export default function LogViewer({ lines, loading, error, onRetry }: LogViewerProps) {
+export default function LogViewer({ lines, loading, error, onRetry, paused, onTogglePause }: LogViewerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
 
@@ -70,6 +70,26 @@ export default function LogViewer({ lines, loading, error, onRetry }: LogViewerP
 
   return (
     <div className="relative">
+      {onTogglePause && (
+        <button
+          onClick={onTogglePause}
+          className="absolute top-3 right-3 z-10 flex items-center gap-2 rounded-md bg-zinc-800 border border-zinc-600 px-3 py-1.5 text-xs text-zinc-200 hover:bg-zinc-700 transition-colors"
+        >
+          {paused ? (
+            <>
+              <span className="h-2 w-2 rounded-full bg-zinc-500" />
+              <Play className="h-3 w-3" />
+              Resume
+            </>
+          ) : (
+            <>
+              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+              <Pause className="h-3 w-3" />
+              Pause
+            </>
+          )}
+        </button>
+      )}
       <div
         ref={scrollRef}
         onScroll={handleScroll}
