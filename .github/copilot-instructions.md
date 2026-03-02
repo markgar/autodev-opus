@@ -47,6 +47,8 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/app.ts` — Express app configuration (middleware, routes, API 404 handler, static serving). No side effects.
 - `src/server/index.ts` — Server startup entry point (port parsing, listen call).
 - `src/server/routes/health.ts` — Health check route that verifies Cosmos DB and Blob Storage connectivity.
+- `src/server/routes/sampleSpecs.ts` — CRUD routes for sample spec markdown files in Blob Storage.
+- `src/server/services/sampleSpecs.ts` — Business logic for listing, reading, uploading, and deleting sample specs.
 - `src/server/config.ts` — Stamp configuration: reads `STAMP_ID` env var, exports derived Azure resource names.
 - `src/server/azure/credential.ts` — Shared `DefaultAzureCredential` instance used by all Azure SDK clients.
 - `src/server/azure/blobClient.ts` — Shared `BlobServiceClient` instance for Azure Blob Storage.
