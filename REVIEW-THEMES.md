@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Logs API backend, project detail page, and log viewer component
+Last updated: New project creation — API and UI
 
 1. **Validate environment variables after parsing.** Never trust `parseInt(process.env.X)` without checking for `NaN` and range — fail fast with an actionable error message naming the env var.
 2. **Scope SPA catch-all routes to exclude `/api/*`.** A blanket `app.get("/{*splat}")` will serve HTML for unmatched API paths, masking 404 errors and confusing JSON-expecting clients.
@@ -27,3 +27,4 @@ Last updated: Logs API backend, project detail page, and log viewer component
 23. **Extract shared test mock factories when the same mock appears in 2+ files.** Module-scope SDK initialization forces every importing test to replicate the full mock chain — extract mock objects into a shared helper to prevent copy-paste drift and reduce update burden.
 24. **Apply established resilience patterns to every service uniformly.** When the codebase has an in-memory fallback for some services, apply the same pattern to every service that uses the same external dependency — partial coverage creates inconsistent error behavior across related endpoints.
 25. **Return generic messages in 500 API responses.** Never expose raw SDK or library error strings to the client — they leak implementation details and may contain sensitive information. Use `"Internal server error"` and log the real error server-side.
+26. **Audit existing DEPLOY.md notes when adding new ones.** When adding a new deployment note, scan existing notes for contradictions with the new functionality — stale notes accumulate across milestones and actively mislead downstream agents.
