@@ -4,6 +4,7 @@ import { initBlobContainers } from "./azure/initBlob.js";
 import { setBlobAvailable } from "./services/sampleSpecs.js";
 import { setCosmosAvailable } from "./services/projectsService.js";
 import { setLogsBlobAvailable } from "./services/logsService.js";
+import { setContainerBlobAvailable } from "./services/projectContainers.js";
 
 function parsePort(raw: string | undefined): number {
   const port = parseInt(raw ?? "3000", 10);
@@ -28,6 +29,7 @@ try {
 } catch (error) {
   setBlobAvailable(false);
   setLogsBlobAvailable(false);
+  setContainerBlobAvailable(false);
   console.warn("⚠️  Blob container initialization failed:", (error as Error).message);
   console.warn("⚠️  Sample specs will use in-memory storage (data will not persist across restarts).");
 }

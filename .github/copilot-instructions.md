@@ -57,7 +57,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/azure/initBlob.ts` — Blob Storage initialization: creates the sample-specs container if it doesn't exist.
 - `src/server/models/project.ts` — Project entity interface for Cosmos DB documents.
 - `src/server/services/projectsService.ts` — Projects service with list, get-by-id, and create Cosmos queries, always filters organizationId="default".
-- `src/server/services/projectContainers.ts` — Blob container provisioning for new projects.
+- `src/server/services/projectContainers.ts` — Blob container provisioning for new projects. Skips creation when blob storage is unavailable.
 - `src/server/routes/projects.ts` — Projects API routes for list, get-by-id, create, and get-logs.
 - `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
 - `src/server/__tests__/helpers/mockCosmos.ts` — Shared Cosmos DB mock factory used by all server test files that import app.ts.
@@ -66,7 +66,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/client/components/AppSidebar.tsx` — Sidebar navigation with grouped menu items and active highlighting.
 - `src/client/components/AppLayout.tsx` — Root layout wrapping sidebar and routed page content.
 - `src/client/pages/` — Convention directory for page-level route components.
-- `src/client/pages/NewProjectPage.tsx` — New project creation form with Zod validation, spec select, and API submission.
+- `src/client/pages/NewProjectPage.tsx` — New project creation form with Zod validation, spec select, and API submission. Delegates state and logic to useNewProjectForm hook.
 - `src/client/pages/NotFoundPage.tsx` — Catch-all 404 page rendered for unmatched client routes.
 - `src/client/pages/SampleSpecsPage.tsx` — Sample specs admin page with upload, list, view, and delete.
 - `src/client/components/SampleSpecsTable.tsx` — Responsive table/card list for sample specs.
@@ -76,6 +76,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/client/vitest.config.ts` — Vitest configuration for frontend tests (jsdom environment).
 - `src/client/test-setup.ts` — Frontend test setup adding DOM assertion matchers.
 - `src/client/hooks/useSampleSpecs.ts` — Custom hook encapsulating sample specs state, fetching, and upload logic.
+- `src/client/hooks/useNewProjectForm.ts` — Custom hook encapsulating new project form state, spec fetching, validation, and submit logic.
 - `src/server/services/logsService.ts` — Log retrieval service that reads *.log and events.jsonl blobs from a project's blob container. Returns empty array when blob storage is unavailable.
 - `src/client/components/LogViewer.tsx` — Terminal-style log viewer with auto-scroll, pause/resume, loading, error, and empty states.
 - `src/client/pages/ProjectDetailPage.tsx` — Project detail page rendering header, log viewer, and back navigation. Delegates data fetching to useProjectDetail hook.

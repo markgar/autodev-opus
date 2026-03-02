@@ -7,6 +7,7 @@ import {
 } from "../services/projectsService.js";
 import { getProjectLogs } from "../services/logsService.js";
 import { ensureProjectContainer } from "../services/projectContainers.js";
+import { isValidSpecName } from "../services/sampleSpecs.js";
 
 const projectsRouter = Router();
 
@@ -25,6 +26,10 @@ projectsRouter.post("/projects", async (req, res) => {
   const trimmedSpec = typeof specName === "string" ? specName.trim() : "";
   if (trimmedSpec.length === 0) {
     res.status(400).json({ message: "specName is required" });
+    return;
+  }
+  if (!isValidSpecName(trimmedSpec)) {
+    res.status(400).json({ message: "Invalid spec name format" });
     return;
   }
 
