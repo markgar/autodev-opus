@@ -9,9 +9,9 @@
     "build": "npm run build:server && npm run build:client",
     "dev": "concurrently -n server,client -c blue,green \"NODE_ENV=development tsx watch src/server/index.ts\" \"vite dev --port 5173\"",
     "start": "node dist/server/index.js",
+    "test": "npm run test:server && npm run test:client",
     "test:server": "vitest run --config src/server/vitest.config.ts",
-    "test:client": "vitest run --config src/client/vitest.config.ts",
-    "test": "npm run test:server && npm run test:client"
+    "test:client": "vitest run --config src/client/vitest.config.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -32,9 +32,11 @@
     "@types/node": "^25.3.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@types/supertest": "^7.2.0",
     "@vitejs/plugin-react": "^5.1.4",
     "concurrently": "^9.2.1",
     "jsdom": "^28.1.0",
+    "supertest": "^7.2.2",
     "tailwindcss": "^4.2.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",

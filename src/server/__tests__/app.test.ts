@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 
 describe("Express app setup", () => {
   it("exports an Express application with standard methods", async () => {
-    const { default: app } = await import("../index.js");
+    const { default: app } = await import("../app.js");
     expect(app).toBeDefined();
     expect(typeof app).toBe("function");
     expect(typeof app.get).toBe("function");

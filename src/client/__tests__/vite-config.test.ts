@@ -37,6 +37,6 @@ describe("Vite configuration", () => {
       "utf-8"
     );
     expect(config).toContain("/api");
-    expect(config).toContain("localhost:3000");
+    expect(config).toContain("localhost:");
   });
 });

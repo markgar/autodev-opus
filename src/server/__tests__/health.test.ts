@@ -7,13 +7,13 @@ describe("health route", () => {
     expect(typeof healthRouter).toBe("function");
   });
 
-  it("has a GET /api/health route registered", () => {
+  it("has a GET /health route registered", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const stack = (healthRouter as any).stack as Array<{
       route?: { path: string; methods: Record<string, boolean> };
     }>;
     const healthLayer = stack.find(
-      (layer) => layer.route?.path === "/api/health"
+      (layer) => layer.route?.path === "/health"
     );
     expect(healthLayer).toBeDefined();
     expect(healthLayer!.route!.methods["get"]).toBe(true);
