@@ -20,6 +20,7 @@
 |----------|---------|-------------|
 | `PORT` | `3000` | Port the Express server listens on inside the container |
 | `NODE_ENV` | — | Set to `production` for static file serving; `development` disables SPA serving |
+| `STAMP_ID` | `qqq` | 3-letter stamp ID. Derives storage account name (`stautodev{stampId}`) and Cosmos account (`cosmos-autodev-{stampId}`) |
 
 ## Port Mappings
 
@@ -74,3 +75,5 @@ npm test
 6. **Server tsconfig excludes tests:** `src/server/tsconfig.json` must have `"exclude": ["./**/__tests__/**"]` to prevent test files from being compiled during `tsc` production build. Test files may import modules differently than the app entry point.
 7. **App code split:** The Express app is defined in `src/server/app.ts` (default export), while `src/server/index.ts` only imports the app, configures the port, and calls `listen()`. Tests that inspect the Express app should import from `app.ts`, not `index.ts`.
 8. **build-output tests need dist/:** The `build-output.test.ts` server tests check for files in `dist/`. Run `npm run build` before `npm test` or these tests will fail.
+9. **Azure SDKs in production image:** `@azure/storage-blob`, `@azure/cosmos`, and `@azure/identity` are production dependencies, so they are included in the production Docker image (not pruned by `--omit=dev`).
+10. **API 404 handler:** Unknown `/api/*` paths return `{ "message": "Not found" }` (JSON 404), not the SPA's index.html. The handler is registered after named API routes but before the SPA catch-all in `app.ts`.
