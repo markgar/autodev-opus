@@ -3,7 +3,6 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -11,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 interface DeleteSpecDialogProps {
   specName: string | null;
@@ -64,14 +64,14 @@ export default function DeleteSpecDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-          <AlertDialogAction
+          <Button
+            variant="destructive"
             onClick={handleDelete}
             disabled={deleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             {deleting && <Loader2 className="animate-spin" />}
             Delete
-          </AlertDialogAction>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
