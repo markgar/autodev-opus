@@ -13,7 +13,7 @@ describe("health route", () => {
       route?: { path: string; methods: Record<string, boolean> };
     }>;
     const healthLayer = stack.find(
-      (layer) => layer.route?.path === "/api/health"
+      (layer) => layer.route?.path === "/health"
     );
     expect(healthLayer).toBeDefined();
     expect(healthLayer!.route!.methods["get"]).toBe(true);
