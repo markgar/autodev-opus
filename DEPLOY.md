@@ -106,6 +106,7 @@ npm test
 =======
 25. **Projects routes registered correctly:** `projectsRouter` is registered in `app.ts` with `app.use("/api", projectsRouter)` after sampleSpecsRouter. Routes: `GET /projects` (list), `GET /projects/:id` (get by id). Both use JSON error envelope on failure.
 26. **Project pages are stubs:** `NewProjectPage`, `ProjectDetailPage`, and `DashboardPage` are placeholder components with only headings. No forms, project lists, or interactive elements yet. Full UI is expected in a later milestone.
+<<<<<<< HEAD
 28. **Blob container init at startup:** `src/server/index.ts` calls `initBlobContainers()` alongside `initCosmos()` at startup, each wrapped in try/catch. Both log prominent `⚠️` warnings on failure. The app continues running even if both fail.
 29. **Spec name validation:** Routes validate spec names with `isValidSpecName()` before any CRUD operation. Invalid names return 400 `{ message: "Invalid spec name" }`. Valid pattern: `/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,250}\.md$/` and no `..` sequences.
 30. **Spec listing bounded:** `listSpecs()` has a `MAX_SPECS = 1000` limit — iteration stops once that many specs are collected.
@@ -113,3 +114,11 @@ npm test
 32. **Responsive project detail page:** `ProjectDetailPage` uses `text-xl md:text-2xl` for heading, `text-xs md:text-sm` for date, and wraps LogViewer in `h-[calc(100vh-14rem)] md:h-[calc(100vh-12rem)]`. LogViewer uses `text-xs md:text-sm` and `h-full` for responsive sizing.
 33. **DashboardPage is still a stub:** As of milestone 06b, DashboardPage only renders a "Projects" heading. No project list, empty state, or creation buttons yet.
 >>>>>>> 77d2fe4 ([validator] Add e2e tests for milestone 06b — responsive detail page and review fixes)
+=======
+27. **Playwright test file naming:** E2E test files follow `e2e/milestone-{id}.spec.ts` naming pattern. Copy files into playwright container with `docker cp` due to DinD volume mount limitations.
+28. **In-memory fallback removed:** Services (sampleSpecs.ts, projectsService.ts) no longer have in-memory fallback. Without Azure credentials, all CRUD endpoints return 500. This means 404 behavior for nonexistent specs (SpecNotFoundError) and the health endpoint returning 200 can only be tested with live Azure connectivity.
+29. **Blob container init at startup:** `initBlobContainers()` is called in `src/server/index.ts` alongside `initCosmos()` during startup, both wrapped in try/catch with console.warn on failure (non-fatal).
+30. **isValidSpecName validation:** All sample-specs routes (GET/:name, POST, DELETE/:name) validate the spec name with `isValidSpecName()` returning 400 for names containing `..`, names without `.md` extension, or names with invalid characters. This validation happens before any Azure call.
+31. **SpecNotFoundError structured handling:** `getSpecContent` and `deleteSpec` now catch Azure `RestError` with statusCode 404 and throw `SpecNotFoundError`. Routes catch this and return HTTP 404 (not 500). Requires Azure connectivity to test.
+32. **MAX_SPECS limit:** `listSpecs()` in sampleSpecs.ts breaks iteration at 1000 entries to prevent memory issues with large containers.
+>>>>>>> 8a626f8 ([validator] Validate milestone 05b — API hardening, path traversal, and error handling)
