@@ -58,7 +58,7 @@ export default function ViewSpecDialog({
     controllerRef.current = controller;
     fetchSpec(controller.signal);
 
-    return () => controller.abort();
+    return () => controllerRef.current?.abort();
   }, [open, specName, fetchSpec]);
 
   function handleRetry() {

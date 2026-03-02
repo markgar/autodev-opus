@@ -30,17 +30,14 @@ vi.mock("../azure/blobClient.js", () => ({
   },
 }));
 
-vi.mock("../azure/cosmosClient.js", () => ({
-  cosmosClient: {
-    getDatabaseAccount: mocks.getDatabaseAccount,
-    database: () => ({
-      container: () => ({
-        items: { query: () => ({ fetchAll: vi.fn().mockResolvedValue({ resources: [] }) }) },
-        item: () => ({ read: vi.fn().mockResolvedValue({ resource: null }) }),
-      }),
+vi.mock("../azure/cosmosClient.js", async () => {
+  const { createMockCosmosClient } = await import("./helpers/mockCosmos.js");
+  return {
+    cosmosClient: createMockCosmosClient({
+      getDatabaseAccount: mocks.getDatabaseAccount,
     }),
-  },
-}));
+  };
+});
 
 import app from "../app.js";
 import { isValidSpecName } from "../services/sampleSpecs.js";
@@ -121,10 +118,10 @@ describe("isValidSpecName — additional patterns", () => {
     expect(isValidSpecName("spec\x00.md")).toBe(false);
   });
 
-  it("accepts maximum valid length name (254 chars total)", () => {
-    // Regex: 1 start char + up to 250 middle chars + ".md" (3 chars) = 254 max
-    const name = "a" + "b".repeat(250) + ".md";
-    expect(name.length).toBe(254);
+  it("accepts maximum valid length name (255 chars total)", () => {
+    // Regex: 1 start char + up to 251 middle chars + ".md" (3 chars) = 255 max
+    const name = "a" + "b".repeat(251) + ".md";
+    expect(name.length).toBe(255);
     expect(isValidSpecName(name)).toBe(true);
   });
 });

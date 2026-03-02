@@ -49,7 +49,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/routes/health.ts` — Health check route that verifies Cosmos DB and Blob Storage connectivity.
 - `src/server/routes/sampleSpecs.ts` — CRUD routes for sample spec markdown files in Blob Storage.
 - `src/server/services/sampleSpecs.ts` — Business logic for listing, reading, uploading, and deleting sample specs. Exports `isValidSpecName` validation and `SpecNotFoundError` for structured 404 handling.
-- `src/server/config.ts` — Stamp configuration: reads `STAMP_ID` env var, exports derived Azure resource names and Cosmos DB constants used by services and initialization.
+- `src/server/config.ts` — Stamp configuration: reads `STAMP_ID` env var, exports derived Azure resource names, Cosmos DB constants, and the `sampleSpecsContainerName` used by services and initialization.
 - `src/server/azure/credential.ts` — Shared `DefaultAzureCredential` instance used by all Azure SDK clients.
 - `src/server/azure/blobClient.ts` — Shared `BlobServiceClient` instance for Azure Blob Storage.
 - `src/server/azure/cosmosClient.ts` — Shared `CosmosClient` instance for Azure Cosmos DB.
@@ -60,6 +60,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/server/services/projectContainers.ts` — Blob container provisioning for new projects.
 - `src/server/routes/projects.ts` — Projects API routes for list, get-by-id, create, and get-logs.
 - `src/server/vitest.config.ts` — Vitest configuration for backend tests (node environment).
+- `src/server/__tests__/helpers/mockCosmos.ts` — Shared Cosmos DB mock factory used by all server test files that import app.ts.
 - `src/client/main.tsx` — React app entry point.
 - `src/client/App.tsx` — Root React component with BrowserRouter, route definitions, catch-all 404 route, and Sonner `<Toaster />`.
 - `src/client/components/AppSidebar.tsx` — Sidebar navigation with grouped menu items and active highlighting.

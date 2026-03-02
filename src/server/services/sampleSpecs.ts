@@ -1,7 +1,6 @@
 import { RestError } from "@azure/storage-blob";
 import { blobServiceClient } from "../azure/blobClient.js";
-
-const CONTAINER_NAME = "sample-specs";
+import { sampleSpecsContainerName } from "../config.js";
 const MAX_SPECS = 1000;
 
 let blobAvailable = true;
@@ -11,7 +10,7 @@ export function setBlobAvailable(available: boolean): void {
 }
 
 function getContainerClient() {
-  return blobServiceClient.getContainerClient(CONTAINER_NAME);
+  return blobServiceClient.getContainerClient(sampleSpecsContainerName);
 }
 
 export class SpecNotFoundError extends Error {
@@ -23,7 +22,7 @@ export class SpecNotFoundError extends Error {
 
 /** Validates a spec filename: alphanumeric start, simple chars, ends with .md, max 255 chars. */
 export function isValidSpecName(name: string): boolean {
-  return /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,250}\.md$/.test(name) && !name.includes("..");
+  return /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,251}\.md$/.test(name) && !name.includes("..");
 }
 
 function isNotFoundError(error: unknown): boolean {

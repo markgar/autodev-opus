@@ -11,4 +11,6 @@ const cosmosAccountName = `cosmos-autodev-${stampId}`;
 const cosmosDatabaseName = "autodev";
 const cosmosContainerName = "items";
 
-export { stampId, storageAccountName, cosmosAccountName, cosmosDatabaseName, cosmosContainerName };
+const sampleSpecsContainerName = "sample-specs";
+
+export { stampId, storageAccountName, cosmosAccountName, cosmosDatabaseName, cosmosContainerName, sampleSpecsContainerName };

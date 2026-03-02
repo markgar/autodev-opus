@@ -27,17 +27,14 @@ vi.mock("../azure/blobClient.js", () => ({
   },
 }));
 
-vi.mock("../azure/cosmosClient.js", () => ({
-  cosmosClient: {
-    getDatabaseAccount: mocks.getDatabaseAccount,
-    database: () => ({
-      container: () => ({
-        items: { query: () => ({ fetchAll: vi.fn().mockResolvedValue({ resources: [] }) }) },
-        item: () => ({ read: vi.fn().mockResolvedValue({ resource: null }) }),
-      }),
+vi.mock("../azure/cosmosClient.js", async () => {
+  const { createMockCosmosClient } = await import("./helpers/mockCosmos.js");
+  return {
+    cosmosClient: createMockCosmosClient({
+      getDatabaseAccount: mocks.getDatabaseAccount,
     }),
-  },
-}));
+  };
+});
 
 import app from "../app.js";
 
