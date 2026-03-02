@@ -182,15 +182,15 @@ describe("POST /api/projects", () => {
     expect(res.body.message).toBe("Internal server error");
   });
 
-  it("returns 500 when blob container creation fails", async () => {
+  it("returns 201 even when blob container creation fails (non-fatal)", async () => {
     mocks.createIfNotExists.mockRejectedValue(new Error("blob unavailable"));
 
     const res = await request(app)
       .post("/api/projects")
       .send({ name: "Blob Fail", specName: "design.md" });
 
-    expect(res.status).toBe(500);
-    expect(res.body.message).toBe("Internal server error");
+    expect(res.status).toBe(201);
+    expect(res.body.name).toBe("Blob Fail");
   });
 
   it("trims leading/trailing whitespace from name", async () => {
