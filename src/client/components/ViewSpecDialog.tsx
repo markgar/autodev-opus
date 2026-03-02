@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Download, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Download, Loader2, RotateCw } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,30 +24,40 @@ export default function ViewSpecDialog({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchSpec = useCallback(
+    (signal?: AbortSignal) => {
+      if (!specName) return;
+      setLoading(true);
+      setError(null);
+      setContent("");
+
+      fetch(`/api/sample-specs/${encodeURIComponent(specName)}`, { signal })
+        .then(async (res) => {
+          if (!res.ok) throw new Error("Failed to load spec");
+          return res.text();
+        })
+        .then((text) => setContent(text))
+        .catch((err) => {
+          if (err.name === "AbortError") return;
+          setError(err instanceof Error ? err.message : "Failed to load spec");
+        })
+        .finally(() => setLoading(false));
+    },
+    [specName],
+  );
+
   useEffect(() => {
     if (!open || !specName) return;
 
     const controller = new AbortController();
-    setLoading(true);
-    setError(null);
-    setContent("");
-
-    fetch(`/api/sample-specs/${encodeURIComponent(specName)}`, {
-      signal: controller.signal,
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Failed to load spec");
-        return res.text();
-      })
-      .then((text) => setContent(text))
-      .catch((err) => {
-        if (err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : "Failed to load spec");
-      })
-      .finally(() => setLoading(false));
+    fetchSpec(controller.signal);
 
     return () => controller.abort();
-  }, [open, specName]);
+  }, [open, specName, fetchSpec]);
+
+  function handleRetry() {
+    fetchSpec();
+  }
 
   function handleDownload() {
     if (!specName || !content) return;
@@ -75,7 +85,13 @@ export default function ViewSpecDialog({
         )}
 
         {error && (
-          <p className="text-sm text-destructive py-4">{error}</p>
+          <div className="flex flex-col items-center gap-2 py-4">
+            <p className="text-sm text-destructive">{error}</p>
+            <Button variant="outline" size="sm" onClick={handleRetry}>
+              <RotateCw />
+              Retry
+            </Button>
+          </div>
         )}
 
         {!loading && !error && (
