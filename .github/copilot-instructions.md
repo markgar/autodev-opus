@@ -60,6 +60,7 @@ Server and client are siblings — server code never imports from `client/` and 
 - `src/client/components/AppSidebar.tsx` — Sidebar navigation with grouped menu items and active highlighting.
 - `src/client/components/AppLayout.tsx` — Root layout wrapping sidebar and routed page content.
 - `src/client/pages/` — Convention directory for page-level route components.
+- `src/client/pages/NotFoundPage.tsx` — Catch-all 404 page rendered for unmatched client routes.
 - `src/client/pages/SampleSpecsPage.tsx` — Sample specs admin page with upload, list, view, and delete.
 - `src/client/components/SampleSpecsTable.tsx` — Responsive table/card list for sample specs.
 - `src/client/components/DeleteSpecDialog.tsx` — Confirmation dialog for spec deletion.
