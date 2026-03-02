@@ -8,7 +8,7 @@
 
 ## Tasks
 
-- [ ] Create Azure credential module at src/server/azure/credential.ts — import `DefaultAzureCredential` from `@azure/identity`, export a single shared instance created with `new DefaultAzureCredential()`
+- [x] Create Azure credential module at src/server/azure/credential.ts — import `DefaultAzureCredential` from `@azure/identity`, export a single shared instance created with `new DefaultAzureCredential()`
 - [ ] Create blob storage client module at src/server/azure/blobClient.ts — import `BlobServiceClient` from `@azure/storage-blob`, import the credential and `storageAccountName` from the config and credential modules, export a `BlobServiceClient` initialized with URL `https://${storageAccountName}.blob.core.windows.net` and the shared credential
 - [ ] Create Cosmos DB client module at src/server/azure/cosmosClient.ts — import `CosmosClient` from `@azure/cosmos`, import the credential and `cosmosAccountName` from the config and credential modules, export a `CosmosClient` initialized with endpoint `https://${cosmosAccountName}.documents.azure.com:443/` and the shared credential via `aadCredentials` option
 - [ ] Create Cosmos DB initialization function at src/server/azure/initCosmos.ts — export an async `initCosmos()` function that calls `cosmosClient.databases.createIfNotExists({ id: "autodev" })` then `database.containers.createIfNotExists({ id: "items", partitionKey: { paths: ["/organizationId"] } })`, log success message to console on completion
