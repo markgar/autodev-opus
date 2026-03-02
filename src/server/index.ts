@@ -14,8 +14,7 @@ const PORT = parsePort(process.env["PORT"]);
 try {
   await initCosmos();
 } catch (error) {
-  console.error("Failed to initialize Cosmos DB:", error);
-  process.exit(1);
+  console.warn("Cosmos DB initialization skipped (unavailable):", (error as Error).message);
 }
 
 app.listen(PORT, () => {
